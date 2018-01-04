@@ -12,12 +12,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Hub.getInstance().putImpl(new TestImpl());
-        Hub.getInstance().getImpl(ITestApi.class).test();
-        Hub.getInstance().getImpl(NoImplApi.class).noImpl();
+        Hub.putImpl(new TestImpl());
+        Hub.getImpl(ITestApi.class).test();
+        Hub.getImpl(NoImplApi.class).noImpl();
 
-        if(Hub.getInstance().implExist(NoImplApi.class)) {
-            Hub.getInstance().getImpl(NoImplApi.class).noReturnImpl();
+        if(Hub.implExist(NoImplApi.class)) {
+            Hub.getImpl(NoImplApi.class).noReturnImpl();
         }
     }
 

@@ -38,7 +38,7 @@ public class Hub {
      * 一个接口只能对应一个实现，之前的实现会被替换掉
      * @param impl 实现IHub接口的对象
      */
-    public synchronized void putImpl(IHub impl) {
+    public static synchronized void putImpl(IHub impl) {
         if (impl == null) {
             return;
         }
@@ -46,25 +46,25 @@ public class Hub {
         Class<?>[] interfaces = impl.getClass().getInterfaces();
         for(Class interfacePer : interfaces) {
             if(IHub.class.isAssignableFrom(interfacePer)) {
-                mRealImpls.put(interfacePer,impl);
+               getInstance(). mRealImpls.put(interfacePer,impl);
             }
         }
     }
 
-    public synchronized void removeImpl(Class<? extends IHub> impl) {
+    public static synchronized void removeImpl(Class<? extends IHub> impl) {
         if (impl == null) {
             return;
         }
-        mRealImpls.remove(impl);
+        getInstance().mRealImpls.remove(impl);
     }
 
-    public synchronized  <T extends IHub> T getImpl(Class<T> iHub) {
+    public static synchronized  <T extends IHub> T getImpl(Class<T> iHub) {
 
         if (!iHub.isInterface()) {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
         }
 
-        IHub realImpl = mRealImpls.get(iHub);
+        IHub realImpl = getInstance().mRealImpls.get(iHub);
 
         if (realImpl == null) {
             ImplHandler implHandler = new ImplHandler(iHub);
@@ -74,7 +74,7 @@ public class Hub {
         return (T) realImpl;
     }
 
-    public synchronized <T extends IHub> boolean implExist(Class<T> iHub) {
-        return mRealImpls.containsKey(iHub);
+    public static synchronized <T extends IHub> boolean implExist(Class<T> iHub) {
+        return getInstance().mRealImpls.containsKey(iHub);
     }
 }
