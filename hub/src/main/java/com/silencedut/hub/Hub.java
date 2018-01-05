@@ -22,7 +22,7 @@ public class Hub {
 
     }
 
-    public static Hub getInstance() {
+    private static Hub getInstance() {
         if(sInstance ==null) {
             synchronized (Hub.class) {
                 if(sInstance ==null) {
