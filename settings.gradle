@@ -1,1 +1,2 @@
-include ':app', ':hub'
+include ':app',':hub',':hub-compiler', ':hub-annotation'
+

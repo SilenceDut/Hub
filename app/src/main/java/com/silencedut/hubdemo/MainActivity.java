@@ -12,7 +12,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Hub.putImpl(new TestImpl());
         Hub.getImpl(ITestApi.class).test();
         Hub.getImpl(NoImplApi.class).noImpl();
 
@@ -24,6 +23,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Hub.getInstance().removeImpl(ITestApi.class);
+        Hub.removeImpl(ITestApi.class);
     }
 }

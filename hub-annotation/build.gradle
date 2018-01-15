@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+apply plugin: 'maven'
+group = 'com.github.SilenceDut'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+compileJava {
+    sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
+}

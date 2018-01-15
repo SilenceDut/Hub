@@ -35,7 +35,9 @@ class ImplHandler implements InvocationHandler {
 
         if(NumberUtil.isPrimitiveType(method.getReturnType())) {
             return -1;
-        } else if(method.getReturnType() == boolean.class){
+        } else if(method.getReturnType() == char.class){
+            return '0';
+        }else if(method.getReturnType() == boolean.class){
             return false;
         }
 

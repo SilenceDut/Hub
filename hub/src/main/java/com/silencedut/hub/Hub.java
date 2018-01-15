@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class Hub {
+
     private static final String TAG = "Hub";
 
     private Map<Class<?>,IHub> mRealImpls = new ConcurrentHashMap<>();
@@ -67,8 +68,17 @@ public class Hub {
         IHub realImpl = getInstance().mRealImpls.get(iHub);
 
         if (realImpl == null) {
-            ImplHandler implHandler = new ImplHandler(iHub);
-            realImpl = (IHub) implHandler.mImplProxy;
+
+            try {
+                IFindImplClz iFindImplClz = (IFindImplClz) Class.forName("com.silencedut.hub.FindImplClzHelper").newInstance();
+                String implClsStr = iFindImplClz.getImplClsName(iHub.getCanonicalName());
+                realImpl = (IHub) Class.forName(implClsStr).newInstance();
+            }catch (Exception e) {
+                ImplHandler implHandler = new ImplHandler(iHub);
+                realImpl = (IHub) implHandler.mImplProxy;
+                Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+e);
+            }
+
         }
 
         return (T) realImpl;
