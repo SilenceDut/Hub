@@ -27,5 +27,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.silencedut:router:1.2.8'
-    implementation project(':hub-annotation')
+    api project(':hub-annotation')
 }
