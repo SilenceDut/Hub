@@ -26,5 +26,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api 'com.github.SilenceDut.Hub:hub-annotation:1.0.0'
+    api 'com.github.SilenceDut.Hub:hub-annotation:0.9.0'
 }
