@@ -2,7 +2,8 @@ package com.silencedut.hubdemo;
 
 import android.util.Log;
 
-import com.example.hub_annotation.HubInject;
+import com.silencedut.hub_annotation.HubInject;
+
 
 /**
  * Created by SilenceDut on 2018/1/3 .

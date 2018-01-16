@@ -1,8 +1,8 @@
 package com.silencedut.hub_compiler;
 
 
-import com.example.hub_annotation.HubInject;
 import com.google.auto.service.AutoService;
+import com.silencedut.hub_annotation.HubInject;
 import com.silencedut.hub_compiler.model.AnnotatedClass;
 
 import java.io.IOException;

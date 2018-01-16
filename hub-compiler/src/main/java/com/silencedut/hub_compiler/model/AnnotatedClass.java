@@ -1,7 +1,6 @@
 package com.silencedut.hub_compiler.model;
 
-
-import com.example.hub_annotation.HubInject;
+import com.silencedut.hub_annotation.HubInject;
 import com.silencedut.hub_compiler.TypeUtil;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
