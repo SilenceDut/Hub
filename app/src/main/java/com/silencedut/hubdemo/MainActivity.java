@@ -14,8 +14,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Hub.getImpl(ITestApi.class).test();
-        Hub.getImpl(NoImplApi.class).noImpl();
+        Hub.getImpl(ITestApi.class);
+
 
         Log.d(TAG,Hub.implExist(ITestApi.class)+";"+Hub.implExist(NoImplApi.class));
 

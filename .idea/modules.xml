@@ -6,8 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/Hub.iml" filepath="$PROJECT_DIR$/Hub.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hub/hub.iml" filepath="$PROJECT_DIR$/hub/hub.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hub-annotation/hub-annotation.iml" filepath="$PROJECT_DIR$/.idea/modules/hub-annotation/hub-annotation.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hub-compiler/hub-compiler.iml" filepath="$PROJECT_DIR$/.idea/modules/hub-compiler/hub-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hub-annotation/hub-annotation.iml" filepath="$PROJECT_DIR$/hub-annotation/hub-annotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hub-compiler/hub-compiler.iml" filepath="$PROJECT_DIR$/hub-compiler/hub-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/moduletest/moduletest.iml" filepath="$PROJECT_DIR$/moduletest/moduletest.iml" />
     </modules>
   </component>
 </project>

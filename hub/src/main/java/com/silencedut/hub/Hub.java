@@ -14,18 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Hub {
 
     private static final String TAG = "Hub";
+    private static final String PACKAGER_SEPARATOR = ".";
 
     private Map<Class<?>,IHub> mRealImpls = new ConcurrentHashMap<>();
-    private IFindImplClz mIFindImplClzHelper;
 
     private static volatile Hub sInstance;
 
     private Hub() {
-        try {
-            mIFindImplClzHelper = (IFindImplClz) Class.forName("com.silencedut.hub.FindImplClzHelper").newInstance();
-        }catch (Exception e) {
-            Log.e(TAG,"mIFindImplClzHelper done not exist , "+e);
-        }
     }
 
     private static Hub getInstance() {
@@ -64,6 +59,7 @@ public class Hub {
         getInstance().mRealImpls.remove(impl);
     }
 
+
     public static synchronized  <T extends IHub> T getImpl(Class<T> iHub) {
 
         if (!iHub.isInterface()) {
@@ -75,21 +71,50 @@ public class Hub {
         if (realImpl == null) {
 
             try {
-                String implClsStr = getInstance().mIFindImplClzHelper.getImplClsName(iHub.getCanonicalName());
+                String apiCanonicalName = iHub.getCanonicalName();
+
+                String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR));
+                String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
+
+                String implCanonicalName = packageName+PACKAGER_SEPARATOR+apiName+"_ImplHelper";
+                IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
+
+                String implClsStr = iFindImplClzHelper.getImplClsName(iHub.getCanonicalName());
+
+                /*
+                暂时先只支持无参的构造函数
+                 */
                 realImpl = (IHub) Class.forName(implClsStr).newInstance();
             }catch (Exception e) {
                 ImplHandler implHandler = new ImplHandler(iHub);
                 realImpl = (IHub) implHandler.mImplProxy;
-                Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+e);
+                Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+e+", using proxy");
             }
-
         }
 
         return (T) realImpl;
     }
 
     public static synchronized <T extends IHub> boolean implExist(Class<T> iHub) {
-        return getInstance().mRealImpls.containsKey(iHub)
-                || getInstance().mIFindImplClzHelper.getImplClsName(iHub.getCanonicalName())!=null;
+        boolean implExist = getInstance().mRealImpls.containsKey(iHub);
+
+        if(implExist) {
+            return true;
+        }
+
+        try {
+            String apiCanonicalName = iHub.getCanonicalName();
+
+            String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR));
+            String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
+
+            String implCanonicalName = packageName+PACKAGER_SEPARATOR+apiName+"_ImplHelper";
+            IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
+
+            return iFindImplClzHelper!=null;
+
+        }catch (Exception e) {
+           return false;
+        }
     }
 }
