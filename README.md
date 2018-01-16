@@ -1,21 +1,72 @@
-# Hub
-a library which can avoid check null when want to invoke a implementation by interface
+## Hub
+a concise di library which can avoid check null when want to invoke a implementation by interface
 
-# About
+## About
 
-Android 开发中通过接口获取实现类，可用于moudle之间的通信，线上环境不用每次都判断实现类是否存在直接调用，而不会出现因实现类不存在而引发的崩溃。
+Android 开发中通过接口获取实现类，可用于module之间的通信，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
+同时线上环境不用每次都判断实现类是否存在直接调用，而不会出现因实现类不存在而引发的崩溃。
+
+**condition-不需要显示注册初始化**
 
 ```java
 public interface ITestApi extends IBaseHub{
-	voit test();
-	boolean noReturnImpl();
+	void test();
 }
 ```
 
-可以直接使用而不用担心引发崩溃
+不需要显示的注册
+
+```java
+@HubInject(api = ITestApi.class)
+public class TestImpl implements ITestApi {
+    @Override
+    public void test() {
+        Log.d("TestImpl","test");
+    }
+}
+```
+
+可以直接使用
 
 ```java
 Hub.getImpl(ITestApi.class).test();
-boolean retuenValue = Hub.getImpl(ITestApi.class). noReturnImpl();
 ```
-上述调用如果 ITestApi 的实现类没注册，**release**版本不会崩溃退出应用，**debug**版本的会强制崩溃，以检查实现类不存在的原因，尤其适用于多moudle，多小组开发的项目中
+
+**condition-实现类不存在不引发崩溃（module间通信）**
+
+```java
+public interface NoImplApi extends IBaseHub{
+    void noImpl();
+    boolean noReturnImpl();
+}
+```
+
+线上环境没有实现类不会引发崩溃
+
+```java
+Hub.getImpl(NoImplApi.class).test();
+boolean returnValue = Hub.getImpl(NoImplApi.class). noReturnImpl();
+```
+
+## Using
+
+**Step1.Add it in your root build.gradle at the end of repositories:**
+
+```java
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+
+**Step2. Add the dependency:**
+
+```java
+dependencies {
+	 implementation 'com.github.SilenceDut.Hub:hub:latestVersion'
+    annotationProcessor 'com.github.SilenceDut.Hub:hub-compiler:latestVersion'
+}
+```

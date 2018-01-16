@@ -16,11 +16,16 @@ public class Hub {
     private static final String TAG = "Hub";
 
     private Map<Class<?>,IHub> mRealImpls = new ConcurrentHashMap<>();
+    private IFindImplClz mIFindImplClzHelper;
 
     private static volatile Hub sInstance;
 
     private Hub() {
-
+        try {
+            mIFindImplClzHelper = (IFindImplClz) Class.forName("com.silencedut.hub.FindImplClzHelper").newInstance();
+        }catch (Exception e) {
+            Log.e(TAG,"mIFindImplClzHelper done not exist , "+e);
+        }
     }
 
     private static Hub getInstance() {
@@ -70,8 +75,7 @@ public class Hub {
         if (realImpl == null) {
 
             try {
-                IFindImplClz iFindImplClz = (IFindImplClz) Class.forName("com.silencedut.hub.FindImplClzHelper").newInstance();
-                String implClsStr = iFindImplClz.getImplClsName(iHub.getCanonicalName());
+                String implClsStr = getInstance().mIFindImplClzHelper.getImplClsName(iHub.getCanonicalName());
                 realImpl = (IHub) Class.forName(implClsStr).newInstance();
             }catch (Exception e) {
                 ImplHandler implHandler = new ImplHandler(iHub);
@@ -85,6 +89,7 @@ public class Hub {
     }
 
     public static synchronized <T extends IHub> boolean implExist(Class<T> iHub) {
-        return getInstance().mRealImpls.containsKey(iHub);
+        return getInstance().mRealImpls.containsKey(iHub)
+                || getInstance().mIFindImplClzHelper.getImplClsName(iHub.getCanonicalName())!=null;
     }
 }
