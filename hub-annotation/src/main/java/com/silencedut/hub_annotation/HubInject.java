@@ -1,4 +1,4 @@
-package com.example.hub_annotation;
+package com.silencedut.hub_annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
