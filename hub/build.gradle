@@ -26,6 +26,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.silencedut:router:1.2.8'
-    api project(':hub-annotation')
+    api 'com.github.SilenceDut.Hub:hub-annotation:1.0.0'
 }
