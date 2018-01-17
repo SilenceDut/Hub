@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
 
         Hub.getImpl(ITestApi.class);
 
-
         Log.d(TAG,Hub.implExist(ITestApi.class)+";"+Hub.implExist(NoImplApi.class));
 
         if(Hub.implExist(NoImplApi.class)) {

@@ -85,6 +85,8 @@ public class Hub {
                 暂时先只支持无参的构造函数
                  */
                 realImpl = (IHub) Class.forName(implClsStr).newInstance();
+
+                putImpl(realImpl);
             }catch (Exception e) {
                 ImplHandler implHandler = new ImplHandler(iHub);
                 realImpl = (IHub) implHandler.mImplProxy;
