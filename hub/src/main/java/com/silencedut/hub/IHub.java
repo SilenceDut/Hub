@@ -5,4 +5,5 @@ package com.silencedut.hub;
  */
 
 public interface IHub {
+    void onCreate();
 }

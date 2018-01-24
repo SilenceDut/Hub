@@ -39,7 +39,7 @@ public class Hub {
      * 一个接口只能对应一个实现，之前的实现会被替换掉
      * @param impl 实现IHub接口的对象
      */
-    public static synchronized void putImpl(IHub impl) {
+    private static synchronized void putImpl(IHub impl) {
         if (impl == null) {
             return;
         }
@@ -85,6 +85,8 @@ public class Hub {
                 暂时先只支持无参的构造函数
                  */
                 realImpl = (IHub) Class.forName(implClsStr).newInstance();
+
+                realImpl.onCreate();
 
                 putImpl(realImpl);
             }catch (Exception e) {
