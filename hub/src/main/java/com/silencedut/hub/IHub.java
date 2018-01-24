@@ -5,5 +5,8 @@ package com.silencedut.hub;
  */
 
 public interface IHub {
+    /**
+     * onCreate will invoked automatically when it's impl instance create, don't invoke it
+     */
     void onCreate();
 }

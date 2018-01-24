@@ -13,4 +13,9 @@ class TestImpl implements ITestApi {
     public void test() {
 
     }
+
+    @Override
+    public void onCreate() {
+
+    }
 }
