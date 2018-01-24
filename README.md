@@ -9,7 +9,7 @@ Android 开发中通过接口获取实现类，可用于module之间的通信，
 **condition-不需要显示注册初始化**
 
 ```java
-public interface ITestApi extends IBaseHub{
+public interface ITestApi extends IHub{
 	void test();
 }
 ```
@@ -19,12 +19,19 @@ public interface ITestApi extends IBaseHub{
 ```java
 @HubInject(api = ITestApi.class)
 public class TestImpl implements ITestApi {
+
+    @Override
+    public void onCreate() {
+        //添加初始化，onCreate 在实现类被创建时自动调用的，不需要再手动调用
+    }
+    
     @Override
     public void test() {
         Log.d("TestImpl","test");
     }
 }
 ```
+  
 
 可以直接使用
 
