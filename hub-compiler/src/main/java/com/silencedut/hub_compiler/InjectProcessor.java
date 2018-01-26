@@ -103,8 +103,8 @@ public class InjectProcessor extends AbstractProcessor{
         String apiName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1, qualifiedSuperClzName.length());
 
         TypeSpec impl = TypeSpec.classBuilder(apiName+"_ImplHelper")
-
                 .addSuperinterface(TypeUtil.ImplClsFinder)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addField(String.class,"implCanonicalName",Modifier.STATIC,Modifier.PRIVATE)
                 .addStaticBlock(staticBlock.build())
                 .addMethod(getMethodThread.build())
