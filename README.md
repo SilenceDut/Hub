@@ -1,6 +1,10 @@
 ## Hub [![](https://jitpack.io/v/SilenceDut/Hub.svg)](https://jitpack.io/#SilenceDut/Hub)
 a concise di library which can avoid check null when want to invoke a implementation by interface
 
+## Project
+
+It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeather),you can learn more.
+
 ## About
 
 Android 开发中通过接口获取实现类，可用于module之间的通信，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
