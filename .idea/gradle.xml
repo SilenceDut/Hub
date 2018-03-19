@@ -12,7 +12,6 @@
             <option value="$PROJECT_DIR$/hub" />
             <option value="$PROJECT_DIR$/hub-annotation" />
             <option value="$PROJECT_DIR$/hub-compiler" />
-            <option value="$PROJECT_DIR$/moduletest" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

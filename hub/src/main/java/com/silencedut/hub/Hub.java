@@ -2,6 +2,8 @@ package com.silencedut.hub;
 
 import android.util.Log;
 
+import com.silencedut.hub_annotation.IFindImplClz;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -71,25 +73,30 @@ public class Hub {
         if (realImpl == null) {
 
             try {
+
                 String apiCanonicalName = iHub.getCanonicalName();
 
                 String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR));
                 String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
 
-                String implCanonicalName = packageName+PACKAGER_SEPARATOR+apiName+"_ImplHelper";
+                String implCanonicalName = packageName + PACKAGER_SEPARATOR + apiName + "_ImplHelper";
+
                 IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
 
-                String implClsStr = iFindImplClzHelper.getImplClsName(iHub.getCanonicalName());
+
 
                 /*
                 暂时先只支持无参的构造函数
                  */
-                realImpl = (IHub) Class.forName(implClsStr).newInstance();
+
+                realImpl = (IHub) iFindImplClzHelper.newImplInstance();
 
                 realImpl.onCreate();
 
                 putImpl(realImpl);
+
             }catch (Exception e) {
+
                 ImplHandler implHandler = new ImplHandler(iHub);
                 realImpl = (IHub) implHandler.mImplProxy;
                 Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+e+", using proxy");

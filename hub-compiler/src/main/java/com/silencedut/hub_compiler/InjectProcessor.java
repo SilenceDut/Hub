@@ -3,11 +3,11 @@ package com.silencedut.hub_compiler;
 
 import com.google.auto.service.AutoService;
 import com.silencedut.hub_annotation.HubInject;
-import com.squareup.javapoet.CodeBlock;
+import com.silencedut.hub_annotation.IFindImplClz;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
 
 import java.io.IOException;
 import java.util.Collections;
@@ -61,18 +61,20 @@ public class InjectProcessor extends AbstractProcessor{
                 info("InjectProcessor process %s",annotatedElement);
                 HubInject hubInject = annotatedElement.getAnnotation(HubInject.class);
                 String qualifiedSuperClassName;
+
                 try {
                     Class<?> clazz = hubInject.api();
+                    info("InjectProcessor process api %s",clazz);
                     qualifiedSuperClassName = clazz.getCanonicalName();
                 } catch (MirroredTypeException mte) {
                     DeclaredType classTypeMirror = (DeclaredType) mte.getTypeMirror();
                     TypeElement classTypeElement = (TypeElement) classTypeMirror.asElement();
                     qualifiedSuperClassName = classTypeElement.getQualifiedName().toString();
-
+                    info("InjectProcessor process clazz %s", TypeName.get(annotatedElement.asType()));
                 }
 
                 try {
-                    generateFinder(qualifiedSuperClassName,annotatedElement.toString()).writeTo(processingEnv.getFiler());
+                    generateFinder(TypeName.get(annotatedElement.asType()),qualifiedSuperClassName,annotatedElement.toString()).writeTo(processingEnv.getFiler());
                 } catch (IOException e) {
                     e.getStackTrace();
                 }
@@ -83,19 +85,13 @@ public class InjectProcessor extends AbstractProcessor{
         return false;
     }
 
-    private JavaFile generateFinder(String qualifiedSuperClzName,String implClzName) {
+    private JavaFile generateFinder(TypeName typeName,String qualifiedSuperClzName,String implClzName) {
 
 
-        CodeBlock.Builder staticBlock = CodeBlock.builder()
-                .addStatement("implCanonicalName = $S",implClzName);
-
-
-
-        MethodSpec.Builder getMethodThread = MethodSpec.methodBuilder("getImplClsName")
+        MethodSpec.Builder getMethodThread = MethodSpec.methodBuilder("newImplInstance")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(String.class)
-                .addStatement("return implCanonicalName")
-                .addParameter(String.class, "methodName");
+                .returns(typeName)
+                .addStatement("return new "+implClzName+"()");
 
         // generate whole class
 
@@ -103,14 +99,10 @@ public class InjectProcessor extends AbstractProcessor{
         String apiName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1, qualifiedSuperClzName.length());
 
         TypeSpec impl = TypeSpec.classBuilder(apiName+"_ImplHelper")
-                .addSuperinterface(TypeUtil.ImplClsFinder)
+                .addSuperinterface(TypeName.get(IFindImplClz.class))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addField(String.class,"implCanonicalName",Modifier.STATIC,Modifier.PRIVATE)
-                .addStaticBlock(staticBlock.build())
                 .addMethod(getMethodThread.build())
                 .build();
-
-
 
         return JavaFile.builder(packageName, impl).build();
     }

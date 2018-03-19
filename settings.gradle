@@ -1,2 +1,2 @@
-include ':app',':hub',':hub-compiler', ':hub-annotation', ':moduletest'
+include ':app',':hub',':hub-compiler', ':hub-annotation'
 

@@ -1,5 +1,8 @@
 package com.silencedut.hubdemo;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.silencedut.hub_annotation.HubInject;
 
 
@@ -10,7 +13,8 @@ import com.silencedut.hub_annotation.HubInject;
 class TestImpl implements ITestApi {
 
     @Override
-    public void test() {
+    public void test(Context context) {
+        Toast.makeText(context,"TestImpl 的 test方法被调用",Toast.LENGTH_LONG).show();
 
     }
 
