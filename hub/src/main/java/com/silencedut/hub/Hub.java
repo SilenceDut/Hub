@@ -18,7 +18,7 @@ public class Hub {
     private static final String TAG = "Hub";
     private static final String PACKAGER_SEPARATOR = ".";
 
-    private Map<Class<?>,IHub> mRealImpls = new ConcurrentHashMap<>();
+    private Map<String,IHub> mRealImpls = new ConcurrentHashMap<>();
 
     private static volatile Hub sInstance;
 
@@ -41,24 +41,19 @@ public class Hub {
      * 一个接口只能对应一个实现，之前的实现会被替换掉
      * @param impl 实现IHub接口的对象
      */
-    private static synchronized void putImpl(IHub impl) {
+    private static synchronized void putImpl(String apiName , IHub impl) {
         if (impl == null) {
             return;
         }
 
-        Class<?>[] interfaces = impl.getClass().getInterfaces();
-        for(Class interfacePer : interfaces) {
-            if(IHub.class.isAssignableFrom(interfacePer)) {
-               getInstance(). mRealImpls.put(interfacePer,impl);
-            }
-        }
+        getInstance(). mRealImpls.put(apiName,impl);
     }
 
     public static synchronized void removeImpl(Class<? extends IHub> impl) {
         if (impl == null) {
             return;
         }
-        getInstance().mRealImpls.remove(impl);
+        getInstance().mRealImpls.remove(impl.getCanonicalName());
     }
 
 
@@ -68,7 +63,7 @@ public class Hub {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
         }
 
-        IHub realImpl = getInstance().mRealImpls.get(iHub);
+        IHub realImpl = getInstance().mRealImpls.get(iHub.getCanonicalName());
 
         if (realImpl == null) {
 
@@ -77,13 +72,12 @@ public class Hub {
                 String apiCanonicalName = iHub.getCanonicalName();
 
                 String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR));
+
                 String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
 
                 String implCanonicalName = packageName + PACKAGER_SEPARATOR + apiName + "_ImplHelper";
 
                 IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
-
-
 
                 /*
                 暂时先只支持无参的构造函数
@@ -93,8 +87,9 @@ public class Hub {
 
                 realImpl.onCreate();
 
-                putImpl(realImpl);
-
+                for(String api : iFindImplClzHelper.getApis()) {
+                    putImpl(api,realImpl);
+                }
             }catch (Exception e) {
 
                 ImplHandler implHandler = new ImplHandler(iHub);

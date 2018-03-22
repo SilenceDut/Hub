@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Hub.getImpl(ITestApi.class).test(this);
-
+        Hub.getImpl(IMultiApi.class).showMulti(this);
         Log.d(TAG,Hub.implExist(ITestApi.class)+";"+Hub.implExist(NoImplApi.class));
 
         if(Hub.implExist(NoImplApi.class)) {
@@ -26,6 +26,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Hub.removeImpl(ITestApi.class);
     }
 }
