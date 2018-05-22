@@ -93,8 +93,12 @@ public class Hub {
             }catch (Exception e) {
 
                 ImplHandler implHandler = new ImplHandler(iHub);
-                realImpl = (IHub) implHandler.mImplProxy;
-                Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+e+", using proxy");
+                if(realImpl == null) {
+                    realImpl = (IHub) implHandler.mImplProxy;
+                    Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+e.getStackTrace()[0]+", using proxy");
+                }else {
+                    Log.e(TAG,"impl %s"+iHub.getSimpleName()+" exit but onCreate error  "+e.getStackTrace()[0]+", using impl");
+                }
             }
         }
 

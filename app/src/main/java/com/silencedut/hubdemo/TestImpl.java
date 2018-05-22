@@ -3,13 +3,11 @@ package com.silencedut.hubdemo;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.silencedut.hub_annotation.HubInject;
-
 
 /**
  * Created by SilenceDut on 2018/1/3 .
  */
-@HubInject(api = {ITestApi.class,IMultiApi.class})
+
 class TestImpl implements ITestApi , IMultiApi{
 
     @Override
