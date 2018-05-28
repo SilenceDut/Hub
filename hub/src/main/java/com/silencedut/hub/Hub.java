@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * a library which can avoid check null when want to invoke a implementation by interface
  *
- * Created by SilenceDut on 2018/1/3 .
+ * Created by liushuai on 2018/1/3 .
  */
 
 public class Hub {
