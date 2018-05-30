@@ -7,7 +7,7 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 
 ## About
 
-Android 开发中通过接口获取实现类，可用于module之间的接口的调用，通信，不需要繁琐的显示注册，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
+Android 开发中通过接口获取实现类，可用于多个module之间的接口的调用，通信，不需要繁琐的显示注册，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
 线上环境不用每次都判断实现类是否存在直接调用，通过动态代理来规避由于实现类不存在而导致的崩溃。
 
 **condition-不需要显示注册初始化**
