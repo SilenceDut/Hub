@@ -7,8 +7,8 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 
 ## About
 
-Android 开发中通过接口获取实现类，可用于module之间的通信，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
-同时线上环境不用每次都判断实现类是否存在直接调用，而不会出现因实现类不存在而引发的崩溃。
+Android 开发中通过接口获取实现类，可用于module之间的接口的调用，通信，不需要繁琐的显示注册，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
+线上环境不用每次都判断实现类是否存在直接调用，通过动态代理来规避由于实现类不存在而导致的崩溃。
 
 **condition-不需要显示注册初始化**
 
@@ -34,13 +34,21 @@ public class TestImpl implements ITestApi {
         Log.d("TestImpl","test");
     }
 }
-```
-  
 
-可以直接使用
+```
+
+不需要判空、强转，可以直接使用
 
 ```java
 Hub.getImpl(ITestApi.class).test();
+```
+多接口支持。优点在于项目存在多个module时，不必要暴露所有接口,只需将需要的接口暴露
+
+```java
+@HubInject(api = {IFunctionProvider.class,IFunctionLogic.class})
+class FunctionImpl implements IProvider , ILogic{
+    ...
+}
 ```
 
 **condition-实现类不存在不引发崩溃（module间通信）**
@@ -77,7 +85,7 @@ allprojects {
 
 ```java
 dependencies {
-	 implementation 'com.github.SilenceDut.Hub:hub:latestVersion'
+    implementation 'com.github.SilenceDut.Hub:hub:latestVersion'
     annotationProcessor 'com.github.SilenceDut.Hub:hub-compiler:latestVersion'
 }
 ```
