@@ -3,7 +3,9 @@ a concise di library which can avoid check null when want to invoke a implementa
 
 ## Project
 
-It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeather),you can learn more.
+It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeather) ,you can learn more.
+
+已用在日活百万级别的线上项目中，目前没出现任何问题，可放心使用
 
 ## About
 
