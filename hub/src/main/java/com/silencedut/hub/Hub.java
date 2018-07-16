@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class Hub {
-
     private static final String TAG = "Hub";
     private static final String PACKAGER_SEPARATOR = ".";
 
