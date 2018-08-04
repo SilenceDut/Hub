@@ -108,7 +108,7 @@ public class Hub {
     }
 
     public static synchronized <T extends IHub> boolean implExist(Class<T> iHub) {
-        boolean implExist = getInstance().mRealImpls.containsKey(iHub);
+        boolean implExist = getInstance().mRealImpls.containsKey(iHub.getCanonicalName());
 
         if(implExist) {
             return true;
