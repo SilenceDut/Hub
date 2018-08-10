@@ -5,10 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author SilenceDut
+ * @date 2018/8/9
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)
-public @interface HubInject {
-    Class[] api();
-    HubType type() default HubType.API;
-    String customPath() default "";
+public @interface HubActivity {
+    Class activityApi();
+    String methodName();
 }

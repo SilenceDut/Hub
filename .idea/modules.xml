@@ -3,14 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Hub.iml" filepath="$PROJECT_DIR$/.idea/Hub.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/Hub.iml" filepath="$PROJECT_DIR$/.idea/Hub.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hub/hub.iml" filepath="$PROJECT_DIR$/hub/hub.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hub/hub.iml" filepath="$PROJECT_DIR$/hub/hub.iml" />
       <module fileurl="file://$PROJECT_DIR$/hub-annotation/hub-annotation.iml" filepath="$PROJECT_DIR$/hub-annotation/hub-annotation.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hub-annotation/hub-annotation.iml" filepath="$PROJECT_DIR$/hub-annotation/hub-annotation.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hub-compiler/hub-compiler.iml" filepath="$PROJECT_DIR$/hub-compiler/hub-compiler.iml" />
       <module fileurl="file://$PROJECT_DIR$/hub-compiler/hub-compiler.iml" filepath="$PROJECT_DIR$/hub-compiler/hub-compiler.iml" />
     </modules>
   </component>

@@ -10,5 +10,4 @@ public interface IHub {
      */
     void onCreate();
 
-
 }

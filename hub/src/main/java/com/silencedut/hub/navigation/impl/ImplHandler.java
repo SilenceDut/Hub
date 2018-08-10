@@ -1,22 +1,27 @@
-package com.silencedut.hub;
+package com.silencedut.hub.navigation.impl;
 
 import android.util.Log;
+
+import com.silencedut.hub.BuildConfig;
+import com.silencedut.hub.NumberUtil;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * Created by SilenceDut on 2018/1/3 .
+ *
+ * @author SilenceDut
+ * @date 2018/1/3
  */
 
-class ImplHandler implements InvocationHandler {
+public class ImplHandler implements InvocationHandler {
 
     private static final String TAG = "ImplHandler";
     private Class mIHub;
-    Object mImplProxy;
+    public Object mImplProxy;
 
-    ImplHandler(Class iHub ) {
+    public ImplHandler(Class iHub ) {
         this.mIHub = iHub;
         this.mImplProxy =  Proxy.newProxyInstance(mIHub.getClassLoader(), new Class[]{mIHub}, this);
     }

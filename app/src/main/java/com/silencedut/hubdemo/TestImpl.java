@@ -10,14 +10,15 @@ import com.silencedut.hub_annotation.HubInject;
  * Created by SilenceDut on 2018/1/3 .
  */
 
-@HubInject(api = {ITestApi.class,IMultiApi.class})
-class TestImpl implements ITestApi , IMultiApi{
+@HubInject(api = {IMultiApi.class})
+class TestImpl implements   IMultiApi{
 
-    @Override
-    public void test(Context context) {
-        Toast.makeText(context,"TestImpl 的 test方法被调用",Toast.LENGTH_LONG).show();
+//    @Override
+//    public void test(Context context) {
+//        Toast.makeText(context,"TestImpl 的 test方法被调用",Toast.LENGTH_LONG).show();
+//
+//    }
 
-    }
 
     @Override
     public void onCreate() {
