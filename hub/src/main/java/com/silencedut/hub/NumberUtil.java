@@ -6,7 +6,7 @@ package com.silencedut.hub;
 
 public class NumberUtil {
 
-    public static boolean isPrimitiveType( Class<?> type) {
+    public static boolean isPrimitiveType(Class<?> type) {
         return type == byte.class
                 || type == int.class
                 || type == short.class

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ImplHub {
     private static final String TAG = "ImplHub";
-
+    private static final String IMPL_HELPER_SUFFIX = "ImplHelper";
     private static Map<String,IHub> sRealImpls = new ConcurrentHashMap<>();
 
     /**
@@ -49,7 +49,7 @@ public class ImplHub {
 
                 String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
 
-                String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + "_ImplHelper";
+                String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR+IMPL_HELPER_SUFFIX;
 
                 IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
 

@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface HubInject {
     Class[] api();
-    HubType type() default HubType.API;
-    String customPath() default "";
 }

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * @date 2018/8/9
  */
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface HubActivity {
     Class activityApi();
     String methodName();

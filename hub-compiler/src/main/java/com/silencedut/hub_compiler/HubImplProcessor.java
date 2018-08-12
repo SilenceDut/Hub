@@ -78,20 +78,22 @@ public class HubImplProcessor extends BaseHubProcessor{
         TypeName stringSet = ParameterizedTypeName.get(ClassName.get(Set.class),ClassName.get(String.class));
 
         CodeBlock.Builder staticBlock = CodeBlock.builder()
-                .addStatement(TypeUtils.METHOD_GETAPIField+" = new $T()",  HashSet.class);
+                .addStatement(Constants.METHOD_GETAPIField+" = new $T()",  HashSet.class);
 
         for(String api : sameImplApiClass) {
-            staticBlock.addStatement(TypeUtils.METHOD_GETAPIField+".add($S)",api);
+            staticBlock.addStatement(Constants.METHOD_GETAPIField+".add($S)",api);
         }
 
-        MethodSpec.Builder getSameImplApis = MethodSpec.methodBuilder(TypeUtils.METHOD_GETAPIS)
+        MethodSpec.Builder getSameImplApis = MethodSpec.methodBuilder(Constants.METHOD_GETAPIS)
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
                 .returns(Set.class)
-                .addStatement("return "+TypeUtils.METHOD_GETAPIField);
+                .addStatement("return "+ Constants.METHOD_GETAPIField);
 
 
         MethodSpec.Builder newInstance = MethodSpec.methodBuilder("newImplInstance")
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
                 .returns(typeName)
                 .addStatement("return new "+implClzName+"()");
 
@@ -100,11 +102,11 @@ public class HubImplProcessor extends BaseHubProcessor{
         String packageName = qualifiedSuperClzName.substring(0, qualifiedSuperClzName.lastIndexOf("."));
         String apiSimpleName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1, qualifiedSuperClzName.length());
 
-        TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+"_ImplHelper")
+        TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+Constants.ACTIVITY_HELPER_SUFFIX)
                 .addSuperinterface(TypeName.get(IFindImplClz.class))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addMethod(newInstance.build())
-                .addField(stringSet,TypeUtils.METHOD_GETAPIField,Modifier.STATIC,Modifier.PRIVATE)
+                .addField(stringSet, Constants.METHOD_GETAPIField,Modifier.STATIC,Modifier.PRIVATE)
                 .addStaticBlock(staticBlock.build())
                 .addMethod(getSameImplApis.build())
                 .build();

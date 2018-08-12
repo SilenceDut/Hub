@@ -4,6 +4,7 @@ package com.silencedut.hub_compiler;
 import com.google.auto.service.AutoService;
 import com.silencedut.hub_annotation.HubActivity;
 import com.silencedut.hub_annotation.HubInject;
+import com.silencedut.hub_annotation.ParamName;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +28,7 @@ public class InjectProcessor extends AbstractProcessor{
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> processAnnotation = new HashSet<>();
+        processAnnotation.add(ParamName.class.getCanonicalName());
         processAnnotation.add(HubInject.class.getCanonicalName());
         processAnnotation.add(HubActivity.class.getCanonicalName());
         return processAnnotation;
@@ -46,7 +48,7 @@ public class InjectProcessor extends AbstractProcessor{
 
         mHubImplProcessor.process(roundEnvironment.getElementsAnnotatedWith(HubInject.class));
         mHubActivityProcessor.process(roundEnvironment.getElementsAnnotatedWith(HubActivity.class));
-
+        mHubActivityProcessor.process(roundEnvironment.getElementsAnnotatedWith(ParamName.class));
         return false;
     }
 

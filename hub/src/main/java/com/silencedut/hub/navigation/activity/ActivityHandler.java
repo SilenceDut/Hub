@@ -1,15 +1,18 @@
 package com.silencedut.hub.navigation.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
-import com.silencedut.hub.BuildConfig;
-import com.silencedut.hub.Hub;
+import com.silencedut.hub.navigation.Expand;
+import com.silencedut.hub.navigation.HubJsonHelper;
 import com.silencedut.hub_annotation.IFindActivity;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * @author SilenceDut
@@ -20,69 +23,72 @@ public class ActivityHandler implements InvocationHandler {
     private static final String TAG = "ActivityHandler";
     private Class mIHubPointer;
     public Object mActivityProxy;
-    private Params mTParams;
+    private Expand mExpand;
 
-    ActivityHandler(Class iHubPointer ) {
+    ActivityHandler(Class iHubPointer) {
         this.mIHubPointer = iHubPointer;
         this.mActivityProxy =  Proxy.newProxyInstance(mIHubPointer.getClassLoader(), new Class[]{mIHubPointer}, this);
+
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-
-        /*
-          in debug model throw crash
-         */
-
-        if( method.getReturnType() != Void.TYPE && BuildConfig.DEBUG) {
-
-            throw new RuntimeException("can't get return value , no impl of "+ method.getName()+"parameter "+method.getParameterTypes());
-        }
+        boolean find =false;
         try {
-            String apiCanonicalName = mIHubPointer.getCanonicalName();
 
-            String activityKey = apiCanonicalName + Hub.CLASS_METHOD_SEPARATOR + method.getName();
+            IFindActivity iFindActivityClzHelper = ActivityHub.generateFindActivity(mIHubPointer,method.getName());
 
-            Class<?> targetActivity = ActivityHub.mActivityPath.get(activityKey);
-
-            Log.d(TAG,"invoke method of " + method.getName()+",targetActivity = "+targetActivity);
-            if(targetActivity==null) {
-
-                String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
-
-                String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1, apiCanonicalName.length());
-
-                String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + "_" + method.getName() + "_ImplHelper";
-
-
-                IFindActivity iFindActivityClzHelper = (IFindActivity) Class.forName(implCanonicalName).newInstance();
-
-                targetActivity = iFindActivityClzHelper.targetActivity();
-
-                ActivityHub.mActivityPath.put(activityKey,targetActivity);
-            }
-
-            Intent intent = new Intent(ActivityHub.sApplication,targetActivity);
+            Intent intent = new Intent(ActivityHub.sApplication,iFindActivityClzHelper.targetActivity());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtras(mTParams.bundle);
-            if(this.mTParams.activity!=null && this.mTParams.resultCode != 0) {
-                this.mTParams.activity.startActivityForResult(intent,this.mTParams.resultCode);
+            buildBundle(intent,method,args,iFindActivityClzHelper);
+
+            if(mExpand!=null && mExpand.activityWeakReference.get()!=null) {
+                ((Activity)(mExpand.activityWeakReference.get())).startActivityForResult(intent,mExpand.requestCode);
+                mExpand.activityWeakReference.clear();
+                mExpand = null;
             }else {
                 ActivityHub.sApplication.startActivity(intent);
             }
 
-            this.mTParams = null;
+            find = true;
         } catch (Exception e) {
 
             Log.e(TAG,"invoke error of "+ mIHubPointer.getName()+":"+method.getName()+" fail ",e);
         }
 
-
-        return null;
+        return find;
     }
 
-    public void setParams(Params params) {
-        this.mTParams = params;
+    private void buildBundle(Intent intent,Method method, Object[] args,IFindActivity iFindActivityClzHelper) {
+        List<String> paramNames = iFindActivityClzHelper.paramNames();
+        for(int index =0; index < args.length;index++) {
+            Type type = method.getGenericParameterTypes()[index];
+            if(type == Integer.TYPE || type == int.class) {
+                intent.putExtra(paramNames.get(index), (Integer) args[index]);
+            }else if(type == Byte.TYPE || type == byte.class) {
+                intent.putExtra(paramNames.get(index), (Byte) args[index]);
+            }else if(type == Short.TYPE || type == short.class) {
+                intent.putExtra(paramNames.get(index), (Short) args[index]);
+            } else if(type == Long.TYPE || type == long.class) {
+                intent.putExtra(paramNames.get(index), (Long) args[index]);
+            } else if(type == Float.TYPE || type == float.class) {
+                intent.putExtra(paramNames.get(index), (Float) args[index]);
+            } else if(type == Double.TYPE || type == double.class) {
+                intent.putExtra(paramNames.get(index), (Double) args[index]);
+            } else if(type == Boolean.TYPE || type == boolean.class) {
+                intent.putExtra(paramNames.get(index), (Boolean) args[index]);
+            }else if(type == String.class ) {
+                intent.putExtra(paramNames.get(index), (String) args[index]);
+            }else {
+                intent.putExtra(paramNames.get(index), HubJsonHelper.toJson(args[index]));
+            }
+        }
+
+    }
+
+
+    public void setExpand(Expand expand) {
+       this.mExpand = expand;
     }
 
 }

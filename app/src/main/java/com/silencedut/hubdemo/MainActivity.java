@@ -7,6 +7,11 @@ import android.view.View;
 
 import com.silencedut.hub.Hub;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -26,7 +31,21 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.activity_navigation).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Hub.getActivity(ITestApi.class).withResult(MainActivity.this,1).build().activitySecond("Hello",10);
+//
+                List<Map<String,Integer>> mapList =  new ArrayList<>();
+
+                Map a = new HashMap<String, Integer>();
+                a.put("abc",10);
+                Map b = new HashMap<String, Integer>();
+                b.put("abc",3);
+                b.put("278",5);
+                mapList.add(a);
+                mapList.add(b);
+                Hub.getActivity(ITestApi.class).activitySecond(mapList,9);
+
+//                Hub.getActivity(ITestApi.class).activitySecond("Hello",10);
+//                Hub.getActivityWithExpand(ITestApi.class).build().activitySecond("Hello",10);
+//                Hub.getActivityWithExpand(ITestApi.class).withResult(MainActivity.this,5).build().activitySecond("Hello",10);
             }
         });
 
