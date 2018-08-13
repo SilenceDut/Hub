@@ -38,14 +38,14 @@ public class ActivityHub {
         Expand<T> expand = new Expand((T) activityHandler.mActivityProxy);
         activityHandler.setExpand(expand);
 
-        ActivityHub.sActivityProxy.put(iHubPointer.getClass().getCanonicalName(),activityHandler);
+        ActivityHub.sActivityProxy.put(iHubPointer.getCanonicalName(),activityHandler);
         return expand;
     }
 
     public static synchronized <T extends IHubActivity> T buildActivity(Class<T> iHubPointer) {
         ActivityHandler activityHandler = getActivityHandler(iHubPointer);
 
-        ActivityHub.sActivityProxy.put(iHubPointer.getClass().getCanonicalName(),activityHandler);
+        ActivityHub.sActivityProxy.put(iHubPointer.getCanonicalName(),activityHandler);
         return (T) activityHandler.mActivityProxy;
     }
 
