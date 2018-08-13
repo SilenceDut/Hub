@@ -37,6 +37,10 @@ public class ActivityHandler implements InvocationHandler {
 
             IFindActivity iFindActivityClzHelper = ActivityHub.generateFindActivity(mIHubPointer,method.getName());
 
+            if(ActivityHub.sApplication == null) {
+                throw new NullPointerException("Use Hub find Activity need init add Application First");
+            }
+
             Intent intent = new Intent(ActivityHub.sApplication,iFindActivityClzHelper.targetActivity());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             buildBundle(intent,method,args,iFindActivityClzHelper);
