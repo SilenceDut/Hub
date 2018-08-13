@@ -84,6 +84,18 @@ boolean returnValue = Hub.getImpl(NoImplApi.class). noReturnImpl();
 
 ### 跳转Activity,参数自动解析不需要繁琐的注解，支持多进程Activity参数传递
 
+在Application里初始化，这里只是传入Application，没有做任何耗时的操作，主要是为了后面跳转Activity时减少传入Context的过程
+```java
+
+public class App extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Hub.init(this);
+    }
+}
+```
+
 ```java
 public interface IActivityTest extends IHubActivity{
     void anyMethodName(List<Map<String,Integer>> a, int b);
@@ -92,6 +104,7 @@ public interface IActivityTest extends IHubActivity{
 ```
 
 在需要调转的Activity上加上HubActivity注解，简单配置，参数名和类型和接口里的保持一致，不需要注解
+
 ```java
 @HubActivity(activityApi = IActivityTest.class,methodName = "anyMethodName")
 public class SecondActivity extends AppCompatActivity {
