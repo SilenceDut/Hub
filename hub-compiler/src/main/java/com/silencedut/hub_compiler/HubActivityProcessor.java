@@ -127,7 +127,7 @@ public class HubActivityProcessor extends BaseHubProcessor {
         String packageName = qualifiedSuperClzName.substring(0, qualifiedSuperClzName.lastIndexOf("."));
         String apiSimpleName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1, qualifiedSuperClzName.length());
 
-        TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+Constants.CLASS_NAME_SEPARATOR+path+Constants.ACTIVITY_HELPER_SUFFIX)
+        TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+Constants.CLASS_NAME_SEPARATOR+path+Constants.CLASS_NAME_SEPARATOR+Constants.ACTIVITY_HELPER_SUFFIX)
                 .addSuperinterface(TypeName.get(IFindActivity.class))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addField(stringList, Constants.Filed_ParamName,Modifier.STATIC,Modifier.PRIVATE)

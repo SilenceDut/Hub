@@ -59,6 +59,9 @@ public class ActivityHandler implements InvocationHandler {
     }
 
     private void buildBundle(Intent intent,Method method, Object[] args,IFindActivity iFindActivityClzHelper) {
+        if(args==null) {
+            return;
+        }
         List<String> paramNames = iFindActivityClzHelper.paramNames();
         for(int index =0; index < args.length;index++) {
             Type type = method.getGenericParameterTypes()[index];

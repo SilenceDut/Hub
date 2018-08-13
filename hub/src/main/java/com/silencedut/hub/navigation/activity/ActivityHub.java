@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2018/8/4
  */
 public class ActivityHub {
-    private static final String ACTIVITY_HELPER_SUFFIX = "HubActivityHelper";
+    private static final String ACTIVITY_HELPER_SUFFIX = "Helper";
     private static Map<String,ActivityHandler> sActivityProxy = new ConcurrentHashMap<>();
     static Map<String,IFindActivity> sActivityHelperPath = new ConcurrentHashMap<>();
     static volatile Application sApplication;
@@ -65,7 +65,7 @@ public class ActivityHub {
 
             String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1, apiCanonicalName.length());
 
-            String activityFindHelperClassName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR + methodName + ACTIVITY_HELPER_SUFFIX;
+            String activityFindHelperClassName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR + methodName + Hub.CLASS_NAME_SEPARATOR+ACTIVITY_HELPER_SUFFIX;
 
             IFindActivity iFindActivityClzHelper = ActivityHub.sActivityHelperPath.get(activityFindHelperClassName);
 

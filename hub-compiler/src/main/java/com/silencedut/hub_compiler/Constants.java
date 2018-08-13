@@ -25,7 +25,7 @@ class Constants {
     final static  String METHOD_INJECT = "inject";
 
     //file name feature
-    final static  String ACTIVITY_HELPER_SUFFIX = "HubActivityHelper";
+    final static  String ACTIVITY_HELPER_SUFFIX = "Helper";
     final static  String IMPL_HELPER_SUFFIX = "ImplHelper";
     final static  String CLASS_NAME_SEPARATOR = "_";
 
