@@ -5,11 +5,11 @@ a concise di library which can avoid check null when want to invoke a implementa
 
 It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeather) ,you can learn more.
 
-同时已用在日活百万级别的线上项目中，目前没出现任何问题，可放心使用
+同时已用在日活百万级别的线上项目中，目前没出现任何问题
 
 ## Feature
 
-#### 1. 根据接口获取实现类，清晰直观，不需要预加载，初始化，随用随取，方便加载,卸载不需要的功能
+#### 1. 根据接口获取不同模块间的实现类，清晰直观，不需要预加载，初始化，随用随取，方便加载,卸载不需要的功能等
 #### 2. 跳转Activity，参数直接在方法中定义，自动处理参数，不需要繁琐的参数说明，字符串，以及注解标识，支持Activity多进程
 #### 3. 不需要繁琐的判空处理
 
