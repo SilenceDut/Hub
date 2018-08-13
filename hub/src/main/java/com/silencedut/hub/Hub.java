@@ -3,7 +3,7 @@ package com.silencedut.hub;
 import android.app.Application;
 
 import com.silencedut.hub.navigation.activity.ActivityHub;
-import com.silencedut.hub.navigation.Expand;
+import com.silencedut.hub.navigation.activity.Expand;
 import com.silencedut.hub.navigation.impl.ImplHub;
 
 /**

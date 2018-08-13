@@ -1,16 +1,14 @@
 package com.silencedut.hubdemo;
 
-import com.silencedut.hub.IHubActivity;
+import android.content.Context;
 
-import java.util.List;
-import java.util.Map;
+import com.silencedut.hub.IHub;
 
 /**
  * Created by SilenceDut on 2018/1/3 .
  */
 
-public interface ITestApi extends IHubActivity {
+public interface ITestApi extends IHub {
 
-    void activitySecond(List<Map<String,Integer>> a, int b);
-    void c();
+     void test(Context context);
 }

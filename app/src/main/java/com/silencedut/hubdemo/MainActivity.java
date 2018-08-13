@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
                 b.put("278",5);
                 mapList.add(a);
                 mapList.add(b);
-                Hub.getActivity(ITestApi.class).activitySecond(mapList,9);
+                Hub.getActivity(IActivityTest.class).activitySecond(mapList,9);
+
+               // Hub.getActivityWithExpand(IActivityTest.class).withResult(MainActivity.this,10).build().activitySecond(mapList,9);
 
 //                Hub.getActivity(ITestApi.class).activitySecond("Hello",10);
 //                Hub.getActivityWithExpand(ITestApi.class).build().activitySecond("Hello",10);

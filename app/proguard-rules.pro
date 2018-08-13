@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+## 泛型与反射
+#-keepattributes *Annotation*
+#
+#------------------hub库-----------------------------
+-keep class * implements com.silencedut.hub_annotation.IFindImplClz {*;}
+-keep class * implements com.silencedut.hub_annotation.IFindActivity {*;}
+-keepnames interface * extends com.silencedut.hub.IHub
+-keepnames interface * extends com.silencedut.hub.IHubActivity

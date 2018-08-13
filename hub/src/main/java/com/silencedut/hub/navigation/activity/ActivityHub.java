@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.silencedut.hub.Hub;
 import com.silencedut.hub.IHubActivity;
-import com.silencedut.hub.navigation.Expand;
 import com.silencedut.hub_annotation.HubActivity;
 import com.silencedut.hub_annotation.IFindActivity;
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.silencedut.hub.Hub;
 import com.silencedut.hub_annotation.HubActivity;
@@ -16,10 +17,11 @@ import java.util.Map;
  * @date 2018/8/4
  */
 
-@HubActivity(activityApi = ITestApi.class,methodName = "activitySecond")
+@HubActivity(activityApi = IActivityTest.class,methodName = "activitySecond")
 public class SecondActivity extends AppCompatActivity {
-    List<Map<String,Integer>> a;
-    int b;
+    List<Map<String,Integer>> listMap;
+    int value;
+    TextView mContent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,6 +29,9 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
         Hub.inject(this);
 
-        Log.d("SecondActivity","a = " +a+ "b ="+b);
+        mContent = findViewById(R.id.content);
+        mContent.setText("second Activity \n process :second \n a size "+listMap.size()+" , b = "+value);
+
+        Log.d("SecondActivity","a = " +listMap+ "b ="+listMap);
     }
 }

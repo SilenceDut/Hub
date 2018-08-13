@@ -102,7 +102,7 @@ public class HubImplProcessor extends BaseHubProcessor{
         String packageName = qualifiedSuperClzName.substring(0, qualifiedSuperClzName.lastIndexOf("."));
         String apiSimpleName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1, qualifiedSuperClzName.length());
 
-        TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+Constants.ACTIVITY_HELPER_SUFFIX)
+        TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+Constants.CLASS_NAME_SEPARATOR+Constants.IMPL_HELPER_SUFFIX)
                 .addSuperinterface(TypeName.get(IFindImplClz.class))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addMethod(newInstance.build())

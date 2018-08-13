@@ -1,4 +1,4 @@
-package com.silencedut.hub.navigation;
+package com.silencedut.hub.navigation.activity;
 
 import android.app.Activity;
 
@@ -12,8 +12,8 @@ import java.lang.ref.WeakReference;
  */
 public class Expand<T extends IHubActivity> {
     private T mIHubApi;
-    public int requestCode;
-    public WeakReference<Activity> activityWeakReference;
+    int requestCode;
+    WeakReference<Activity> activityWeakReference;
 
 
     public Expand(T iHubAPi) {
@@ -22,7 +22,7 @@ public class Expand<T extends IHubActivity> {
     }
 
 
-    public Expand<T> withResult(Activity startActivity, int resultCode) {
+    public Expand<T> withResult(Activity startActivity, int requestCode) {
         if(this.activityWeakReference.get() == null && startActivity == null ) {
             return this;
         }
