@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.silencedut.hub.Hub;
 
@@ -41,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
                 b.put("278",5);
                 mapList.add(a);
                 mapList.add(b);
-                Hub.getActivity(IActivityTest.class).activitySecond(mapList,9);
-
+                boolean found = Hub.getActivity(IActivityTest.class).activitySecond(mapList,9);
+                Toast.makeText(MainActivity.this,"找到了对应的Activity ? "+ found,Toast.LENGTH_LONG).show();
                // Hub.getActivityWithExpand(IActivityTest.class).withResult(MainActivity.this,10).build().activitySecond(mapList,9);
 
 //                Hub.getActivity(ITestApi.class).activitySecond("Hello",10);

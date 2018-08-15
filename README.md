@@ -13,10 +13,9 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 #### 2. 跳转Activity，参数直接在方法中定义，自动处理参数，不需要繁琐的参数说明，字符串，以及注解标识，支持Activity多进程
 #### 3. 不需要繁琐的判空处理
 
-
-**接口化的通信方式，面向接口编程，更清晰直观，对IDE更友好（可在IDE中直接跳转），编译期发现问题。
+**接口+数据结构。这种方式好处明显接口化的通信方式，面向接口编程，更清晰直观，对IDE更友好（可在IDE中直接跳转），协议变化直接反映在编译上，维护接口也简单。
 使用简单，更少的初始化，注册，注解等，学习成本低
-已在线上项目中使用久，稳定性有保证**
+已在线上项目中使用久，稳定性 有保证**
 
 ## Using
 
@@ -95,10 +94,10 @@ public class App extends Application {
     }
 }
 ```
-
+如果需要判断是否存在相应的页面来做一些提示之类的，可以将函数返回值的类型设置为boolean
 ```java
 public interface IActivityTest extends IHubActivity{
-    void anyMethodName(List<Map<String,Integer>> a, int b);
+    boolean anyMethodName(List<Map<String,Integer>> a, int b); 
     void activity2(); // no need use at present
 }
 ```
@@ -117,7 +116,7 @@ public class SecondActivity extends AppCompatActivity {
 调用
 
 ```java
-Hub.getActivity(IActivityTest.class).activitySecond(mapList,9);
+boolean found = Hub.getActivity(IActivityTest.class).activitySecond(mapList,9);
 ```
 
 activityResult 

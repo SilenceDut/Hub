@@ -10,6 +10,6 @@ import java.util.Map;
  * @date 2018/8/12
  */
 public interface IActivityTest extends IHubActivity{
-    void activitySecond(List<Map<String,Integer>> listMap, int value);
+    boolean activitySecond(List<Map<String,Integer>> listMap, int value);
     void c();
 }
