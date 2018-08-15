@@ -9,83 +9,64 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 
 ## Feature
 
-#### 1. 根据接口获取不同模块间的实现类，清晰直观，不需要预加载，初始化，随用随取，方便加载,卸载不需要的功能等
-#### 2. 跳转Activity，参数直接在方法中定义，自动处理参数，不需要繁琐的参数说明，字符串，以及注解标识，支持Activity多进程
-#### 3. 不需要繁琐的判空处理
-
-**接口+数据结构。这种方式好处明显接口化的通信方式，面向接口编程，更清晰直观，对IDE更友好（可在IDE中直接跳转），协议变化直接反映在编译上，维护接口也简单。
-使用简单，更少的初始化，注册，注解等，学习成本低
-已在线上项目中使用久，稳定性 有保证**
+1. 通过控制反转实现module间服务提供、Activity跳转，Activity支持参数自动处理传递的参数，不需要繁琐的注解标注
+2. 多接口支持。优点在于不必要暴露所有接口,只需将需要的接口暴露，比如一个服务可能支持多个功能，但是有些功能只需要再module内使用，有些需要提供给其他module，这样就可以抽离出多个接口，只需要将需要暴露的放到基础module里。
+3. 支持**多进程Activity跳转**的参数自动处理
+4. 接口化的通信方式类似于“SDK”+数据结构，面向接口编程，更清晰直观， 对IDE更友好（可在IDE中直接跳转），协议变化直接反映在编译上，维护接口也简单
+5. 不需要繁琐的判空处理，服务的实现类或者路径的Activity不存在时不会崩溃。Activity跳转失败可以通过方法返回值来感知，做一些异常处理
+6. **Less is more, simple is better!使用简单，功能强大**
 
 ## Using
 
-### 通过接口获取实现类
+### 简单的使用方式
 
-Android 开发中通过接口获取实现类，可用于多个module之间的接口的调用，通信，不需要繁琐的显示注册，通过注解解决module的依赖初始化问题，并且可以避免由于初始化先后顺序导致的问题
-线上环境不用每次都判断实现类是否存在直接调用，通过动态代理来规避由于实现类不存在而导致的崩溃。
+坚持 **Less is more, simple is better!**的理念，接口定义、调用的方式都很是常规的方式，尽可能的减少注解来标注，使配置最小化。
 
-**condition-不需要显示注册初始化**
+####服务提供
 
+
+向其他module提供的接口(在common module里定义)
 ```java
-public interface ITestApi extends IHub{
-	void test();
+public interface IFunctionOuter extends IHub{
+	void testOut();
 }
 ```
 
-不需要显示的注册
+不需要暴露的接口（A module里定义）
 
 ```java
-@HubInject(api = ITestApi.class)
-public class TestImpl implements ITestApi {
+public interface IFunctionInner extends IHub{
+	void testInner();
+}
+```
 
+实现功能（ A module里实现）
+```java
+@HubInject(api = {IFunctionInner.class, IFunctionOuter})
+class FunctionImpl implements IFunctionInner , IFunctionOuter{
     @Override
-    public void onCreate() {
-        //添加初始化，onCreate 在实现类被创建时自动调用的，不需要再手动调用
+    public void testInner(){
+    ...
     }
     
     @Override
-    public void test() {
-        Log.d("TestImpl","test");
+    public void testOut(){
+    ...
     }
 }
-
 ```
 
-不需要判空、强转，可以直接使用
+不需要判空、强转，直接调用（任何module里都可以调用）
 
 ```java
-Hub.getImpl(ITestApi.class).test();
-```
-多接口支持。优点在于项目存在多个module时，不必要暴露所有接口,只需将需要的接口暴露
-
-```java
-@HubInject(api = {IFunctionProvider.class,IFunctionLogic.class})
-class FunctionImpl implements IProvider , ILogic{
-    ...
-}
+Hub.getImpl(IFunctionOuter.class). testOut();
 ```
 
-**condition-实现类不存在不引发崩溃（module间通信）**
+####Activity跳转
+
+在Application里初始化，这里只是传入Application引用做缓存，主要是为了后面跳转Activity时减少传入Context的过程，只是一个赋值操作，没有做任何耗时的操作，如果不需要**Activity跳转**，只需要**服务提供**,这个初始化就不要添加
 
 ```java
-public interface NoImplApi extends IBaseHub{
-    void noImpl();
-    boolean noReturnImpl();
-}
-```
-
-线上环境没有实现类不会引发崩溃
-
-```java
-Hub.getImpl(NoImplApi.class).test();
-boolean returnValue = Hub.getImpl(NoImplApi.class). noReturnImpl();
-```
-
-### 跳转Activity,参数自动解析不需要繁琐的注解，支持多进程Activity参数传递
-
-在Application里初始化，这里只是传入Application，没有做任何耗时的操作，主要是为了后面跳转Activity时减少传入Context的过程
-```java
-
 public class App extends Application {
     @Override
     public void onCreate() {
@@ -94,7 +75,9 @@ public class App extends Application {
     }
 }
 ```
+
 如果需要判断是否存在相应的页面来做一些提示之类的，可以将函数返回值的类型设置为boolean
+
 ```java
 public interface IActivityTest extends IHubActivity{
     boolean anyMethodName(List<Map<String,Integer>> a, int b); 
@@ -102,7 +85,7 @@ public interface IActivityTest extends IHubActivity{
 }
 ```
 
-在需要调转的Activity上加上HubActivity注解，简单配置，参数名和类型和接口里的保持一致，不需要注解
+在需要调转的Activity上加上HubActivity注解，通过methodName也指定当前Activity对应的接口的方法，如果需要传参数，参数名和类型和接口里的保持一致，不需要注解，跳转完成后，Activity的参数会自动被解析（支持跨进程的Activity）
 
 ```java
 @HubActivity(activityApi = IActivityTest.class,methodName = "anyMethodName")
@@ -112,17 +95,15 @@ public class SecondActivity extends AppCompatActivity {
     ...
 }
 ```
-
 调用
-
 ```java
 boolean found = Hub.getActivity(IActivityTest.class).activitySecond(mapList,9);
-```
 
-activityResult 
-```java
+如果需要activityResult 
+
 Hub.getActivityWithExpand(IActivityTest.class).withResult(MainActivity.this,10).build().activitySecond(mapList,9);
 ```
+
 
 ## Import
 
@@ -153,4 +134,21 @@ dependencies {
 -keep class * implements com.silencedut.hub_annotation.IFindActivity {*;}
 -keepnames interface * extends com.silencedut.hub.IHub
 -keepnames interface * extends com.silencedut.hub.IHubActivity
+```
+
+## License
+```
+Copyright 2017-2018 SilenceDut
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
