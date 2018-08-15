@@ -20,9 +20,9 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 
 ### 简单的使用方式
 
-坚持 **Less is more, simple is better!**的理念，接口定义、调用的方式都很是常规的方式，尽可能的减少注解来标注，使配置最小化。
+坚持 **Less is more, simple is better!** 的理念，接口定义、调用的方式都很是常规的方式，尽可能的减少注解来标注，使配置最小化。
 
-####服务提供
+#### 服务提供
 
 
 向其他module提供的接口(在common module里定义)
@@ -62,7 +62,7 @@ class FunctionImpl implements IFunctionInner , IFunctionOuter{
 Hub.getImpl(IFunctionOuter.class). testOut();
 ```
 
-####Activity跳转
+#### Activity跳转
 
 在Application里初始化，这里只是传入Application引用做缓存，主要是为了后面跳转Activity时减少传入Context的过程，只是一个赋值操作，没有做任何耗时的操作，如果不需要**Activity跳转**，只需要**服务提供**,这个初始化就不要添加
 
