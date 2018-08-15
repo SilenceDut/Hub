@@ -18,9 +18,7 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 
 ## Using
 
-### 简单的使用方式
-
-坚持 **Less is more, simple is better!** 的理念，接口定义、调用的方式都很是常规的方式，尽可能的减少注解来标注，使配置最小化。
+简单的使用方式,坚持 **Less is more, simple is better!** 的理念，接口定义、调用的方式都很是常规的方式，尽可能的减少注解来标注，使配置最小化。
 
 #### 服务提供
 
