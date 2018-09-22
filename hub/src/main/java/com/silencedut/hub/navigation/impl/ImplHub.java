@@ -22,7 +22,7 @@ public class ImplHub {
      * 一个接口只能对应一个实现，之前的实现会被替换掉
      * @param impl 实现IHub接口的对象
      */
-    private static synchronized void putImpl(String apiName , IHub impl) {
+    private static  void putImpl(String apiName , IHub impl) {
         if (impl == null) {
             return;
         }
@@ -31,7 +31,7 @@ public class ImplHub {
     }
 
 
-    public static synchronized  <T extends IHub> T getImpl(Class<T> iHub) {
+    public static   <T extends IHub> T getImpl(Class<T> iHub) {
 
         if (!iHub.isInterface()) {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
@@ -80,7 +80,7 @@ public class ImplHub {
         return (T) realImpl;
     }
 
-    public static synchronized <T extends IHub> boolean implExist(Class<T> iHub) {
+    public static  <T extends IHub> boolean implExist(Class<T> iHub) {
         boolean implExist = sRealImpls.containsKey(iHub.getCanonicalName());
 
         if(implExist) {
@@ -103,7 +103,7 @@ public class ImplHub {
         }
     }
 
-    public static synchronized void removeImpl(Class<? extends IHub> impl) {
+    public static  void removeImpl(Class<? extends IHub> impl) {
         if (impl == null) {
             return;
         }
