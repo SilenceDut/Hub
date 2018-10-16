@@ -16,18 +16,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ImplHub {
     private static final String TAG = "ImplHub";
     private static final String IMPL_HELPER_SUFFIX = "ImplHelper";
-    private static Map<String,IHub> sRealImpls = new ConcurrentHashMap<>();
+    private static Map<Class,IHub> sRealImpls = new ConcurrentHashMap<>();
 
     /**
      * 一个接口只能对应一个实现，之前的实现会被替换掉
      * @param impl 实现IHub接口的对象
      */
-    private static  void putImpl(String apiName , IHub impl) {
+    private static  void putImpl(Class api , IHub impl) {
         if (impl == null) {
             return;
         }
 
-        sRealImpls.put(apiName,impl);
+        sRealImpls.put(api,impl);
     }
 
 
@@ -37,7 +37,7 @@ public class ImplHub {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
         }
 
-        IHub realImpl = sRealImpls.get(iHub.getCanonicalName());
+        IHub realImpl = sRealImpls.get(iHub);
 
         if (realImpl == null) {
 
@@ -60,8 +60,8 @@ public class ImplHub {
 
                     realImpl = (IHub) iFindImplClzHelper.newImplInstance();
 
-                    for(String api : iFindImplClzHelper.getApis()) {
-                        putImpl(api,realImpl);
+                    for(String apiClassName : iFindImplClzHelper.getApis()) {
+                        putImpl(Class.forName(apiClassName),realImpl);
                     }
 
                     realImpl.onCreate();
@@ -84,7 +84,7 @@ public class ImplHub {
     }
 
     public static  <T extends IHub> boolean implExist(Class<T> iHub) {
-        boolean implExist = sRealImpls.containsKey(iHub.getCanonicalName());
+        boolean implExist = sRealImpls.containsKey(iHub);
 
         if(implExist) {
             return true;
@@ -106,10 +106,10 @@ public class ImplHub {
         }
     }
 
-    public static  void removeImpl(Class<? extends IHub> impl) {
-        if (impl == null) {
+    public static  void removeImpl(Class<? extends IHub> api) {
+        if (api == null) {
             return;
         }
-        sRealImpls.remove(impl.getCanonicalName());
+        sRealImpls.remove(api);
     }
 }
