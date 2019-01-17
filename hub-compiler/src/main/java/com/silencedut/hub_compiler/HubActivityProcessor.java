@@ -56,7 +56,6 @@ public class HubActivityProcessor extends BaseHubProcessor {
 
                     TypeElement classTypeElement = (TypeElement) classTypeMirror.asElement();
 
-
                     try {
                         generateActivityFinder(hubActivity.methodName(), classTypeElement, ClassName.get((TypeElement) annotatedElement)).writeTo(processingEnv.getFiler());
 

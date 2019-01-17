@@ -123,8 +123,8 @@ allprojects {
 
 ```java
 dependencies {
-    implementation 'com.github.SilenceDut.Hub:hub:latestVersion'
-    annotationProcessor 'com.github.SilenceDut.Hub:hub-compiler:latestVersion'
+    implementation 'com.github.silencedut.hub:hub:latestVersion'
+    annotationProcessor 'com.github.silencedut.hub:hub-compiler:latestVersion'
 }
 ```
 
