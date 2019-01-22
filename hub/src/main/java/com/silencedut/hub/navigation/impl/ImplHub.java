@@ -40,31 +40,31 @@ public class ImplHub {
         IHub realImpl = sRealImpls.get(iHub);
 
         if (realImpl == null) {
-
             try {
                 synchronized (iHub.getDeclaredClasses()) {
 
-                    String apiCanonicalName = iHub.getCanonicalName();
+                    if (sRealImpls.get(iHub) == null) {
+                        String apiCanonicalName = iHub.getCanonicalName();
 
-                    String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
+                        String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
 
-                    String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
+                        String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
 
-                    String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR+IMPL_HELPER_SUFFIX;
+                        String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR+IMPL_HELPER_SUFFIX;
 
-                    IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
+                        IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
 
-                    /*
-                    暂时先只支持无参的构造函数
-                     */
+                        /*
+                        暂时先只支持无参的构造函数
+                         */
 
-                    realImpl = (IHub) iFindImplClzHelper.newImplInstance();
+                        realImpl = (IHub) iFindImplClzHelper.newImplInstance();
 
-                    for(String apiClassName : iFindImplClzHelper.getApis()) {
-                        putImpl(Class.forName(apiClassName),realImpl);
+                        for(String apiClassName : iFindImplClzHelper.getApis()) {
+                            putImpl(Class.forName(apiClassName),realImpl);
+                        }
+                        realImpl.onCreate();
                     }
-                    realImpl.onCreate();
-
                 }
 
 
