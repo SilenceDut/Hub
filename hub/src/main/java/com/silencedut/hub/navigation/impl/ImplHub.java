@@ -31,7 +31,7 @@ public class ImplHub {
     }
 
 
-    public static <T extends IHub> T getImpl(Class<T> iHub) {
+    public static <T extends IHub> T getImpl( Class<T> iHub) {
 
         if (!iHub.isInterface()) {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
@@ -42,7 +42,7 @@ public class ImplHub {
         if (realImpl == null) {
 
             try {
-                synchronized (iHub.getCanonicalName()) {
+                synchronized (iHub.getDeclaredClasses()) {
 
                     String apiCanonicalName = iHub.getCanonicalName();
 
@@ -63,10 +63,10 @@ public class ImplHub {
                     for(String apiClassName : iFindImplClzHelper.getApis()) {
                         putImpl(Class.forName(apiClassName),realImpl);
                     }
-
                     realImpl.onCreate();
 
                 }
+
 
             }catch (Exception e) {
 

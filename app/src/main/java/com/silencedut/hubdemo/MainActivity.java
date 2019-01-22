@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Hub.getImpl(IMultiApi.class).showMulti(MainActivity.this);
+
             }
         });
 

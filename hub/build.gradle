@@ -37,6 +37,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compileOnly 'com.alibaba:fastjson:1.1.68.android'
+    compileOnly 'com.alibaba:fastjson:1.1.70.android'
     api project(":hub-annotation")
 }
