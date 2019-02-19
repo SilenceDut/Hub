@@ -41,7 +41,7 @@ public class ImplHub {
 
         if (realImpl == null) {
             try {
-                synchronized (iHub.getDeclaredClasses()) {
+                synchronized (iHub) {
 
                     if (sRealImpls.get(iHub) == null) {
                         String apiCanonicalName = iHub.getCanonicalName();
