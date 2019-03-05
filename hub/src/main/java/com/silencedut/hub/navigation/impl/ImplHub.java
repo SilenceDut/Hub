@@ -22,7 +22,7 @@ public class ImplHub {
      * 一个接口只能对应一个实现，之前的实现会被替换掉
      * @param impl 实现IHub接口的对象
      */
-    private static  void putImpl(Class api , IHub impl) {
+    private static void putImpl(Class api , IHub impl) {
         if (impl == null) {
             return;
         }
@@ -42,8 +42,8 @@ public class ImplHub {
         if (realImpl == null) {
             try {
                 synchronized (iHub) {
-
-                    if (sRealImpls.get(iHub) == null) {
+                    realImpl = sRealImpls.get(iHub);
+                    if (realImpl == null) {
                         String apiCanonicalName = iHub.getCanonicalName();
 
                         String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
