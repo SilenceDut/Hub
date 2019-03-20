@@ -60,10 +60,12 @@ public class ImplHub {
 
                         realImpl = (IHub) iFindImplClzHelper.newImplInstance();
 
+                        realImpl.onCreate();
+
                         for(String apiClassName : iFindImplClzHelper.getApis()) {
                             putImpl(Class.forName(apiClassName),realImpl);
                         }
-                        realImpl.onCreate();
+
                     }
                 }
 
