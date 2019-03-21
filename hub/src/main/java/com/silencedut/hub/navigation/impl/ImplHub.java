@@ -49,10 +49,10 @@ public class ImplHub {
 
 
         int monitorIndex = iHub.hashCode() & (HubMonitor.values().length -1);
-
+        IHub realImpl;
         synchronized (HubMonitor.values()[monitorIndex]) {
             try {
-                IHub realImpl = sRealImpls.get(iHub);
+                realImpl = sRealImpls.get(iHub);
                 if (realImpl == null) {
                     String apiCanonicalName = iHub.getCanonicalName();
 
@@ -72,14 +72,14 @@ public class ImplHub {
 
                     realImpl.onCreate();
 
-
                 }
             } catch (Exception e) {
 
                 ImplHandler implHandler = new ImplHandler(iHub);
-                IHub realImpl = sRealImpls.get(iHub);
+                realImpl = sRealImpls.get(iHub);
                 if (realImpl == null) {
-                    sRealImpls.put (iHub,(IHub) implHandler.mImplProxy);
+                    realImpl = (IHub) implHandler.mImplProxy;
+                    sRealImpls.put (iHub,realImpl);
                     Log.e(TAG, "find impl " + iHub.getSimpleName() + " error " + ", using proxy", e);
                 } else {
                     Log.e(TAG, "impl %s" + iHub.getSimpleName() + " exit but onCreate error , using impl", e);
@@ -87,7 +87,7 @@ public class ImplHub {
             }
         }
 
-        return (T) sRealImpls.get(iHub);
+        return (T) realImpl;
     }
 
     public static  <T extends IHub> boolean implExist(Class<T> iHub) {
