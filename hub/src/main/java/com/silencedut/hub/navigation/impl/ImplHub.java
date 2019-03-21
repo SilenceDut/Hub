@@ -14,6 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2018/8/9
  */
 public class ImplHub {
+
+    private enum HubMonitor {
+        /**
+         * hub class对象公用锁，避免直接锁class可能造成的死锁。length 必须为 2的n次方，用位运算代替求余数
+         */
+        ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN
+    }
+
+
     private static final String TAG = "ImplHub";
     private static final String IMPL_HELPER_SUFFIX = "ImplHelper";
     private static Map<Class,IHub> sRealImpls = new ConcurrentHashMap<>();
@@ -28,61 +37,57 @@ public class ImplHub {
         }
 
         sRealImpls.put(api,impl);
+
     }
 
 
-    public static <T extends IHub> T getImpl( Class<T> iHub) {
+    public static <T extends IHub> T getImpl(Class<T> iHub) {
 
         if (!iHub.isInterface()) {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
         }
 
-        IHub realImpl = sRealImpls.get(iHub);
 
-        if (realImpl == null) {
+        int monitorIndex = iHub.hashCode() & (HubMonitor.values().length -1);
+
+        synchronized (HubMonitor.values()[monitorIndex]) {
             try {
-                synchronized (iHub) {
-                    realImpl = sRealImpls.get(iHub);
-                    if (realImpl == null) {
-                        String apiCanonicalName = iHub.getCanonicalName();
+                IHub realImpl = sRealImpls.get(iHub);
+                if (realImpl == null) {
+                    String apiCanonicalName = iHub.getCanonicalName();
 
-                        String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
+                    String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
 
-                        String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
+                    String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1, apiCanonicalName.length());
 
-                        String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR+IMPL_HELPER_SUFFIX;
+                    String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR + IMPL_HELPER_SUFFIX;
 
-                        IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
+                    IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
 
-                        /*
-                        暂时先只支持无参的构造函数
-                         */
+                    realImpl = (IHub) iFindImplClzHelper.newImplInstance();
 
-                        realImpl = (IHub) iFindImplClzHelper.newImplInstance();
-
-                        realImpl.onCreate();
-
-                        for(String apiClassName : iFindImplClzHelper.getApis()) {
-                            putImpl(Class.forName(apiClassName),realImpl);
-                        }
-
+                    for (String apiClassName : iFindImplClzHelper.getApis()) {
+                        putImpl(Class.forName(apiClassName), realImpl);
                     }
+
+                    realImpl.onCreate();
+
+
                 }
-
-
-            }catch (Exception e) {
+            } catch (Exception e) {
 
                 ImplHandler implHandler = new ImplHandler(iHub);
-                if(realImpl == null) {
-                    realImpl = (IHub) implHandler.mImplProxy;
-                    Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+", using proxy", e);
-                }else {
-                    Log.e(TAG,"impl %s"+iHub.getSimpleName()+" exit but onCreate error , using impl",e);
+                IHub realImpl = sRealImpls.get(iHub);
+                if (realImpl == null) {
+                    sRealImpls.put (iHub,(IHub) implHandler.mImplProxy);
+                    Log.e(TAG, "find impl " + iHub.getSimpleName() + " error " + ", using proxy", e);
+                } else {
+                    Log.e(TAG, "impl %s" + iHub.getSimpleName() + " exit but onCreate error , using impl", e);
                 }
             }
         }
 
-        return (T) realImpl;
+        return (T) sRealImpls.get(iHub);
     }
 
     public static  <T extends IHub> boolean implExist(Class<T> iHub) {
