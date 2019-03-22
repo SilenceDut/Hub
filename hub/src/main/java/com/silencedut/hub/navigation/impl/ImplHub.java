@@ -73,16 +73,16 @@ public class ImplHub {
                     realImpl.onCreate();
 
                 }
-            } catch (Exception e) {
+            } catch (Throwable throwable) {
 
                 ImplHandler implHandler = new ImplHandler(iHub);
                 realImpl = sRealImpls.get(iHub);
                 if (realImpl == null) {
                     realImpl = (IHub) implHandler.mImplProxy;
                     sRealImpls.put (iHub,realImpl);
-                    Log.e(TAG, "find impl " + iHub.getSimpleName() + " error " + ", using proxy", e);
+                    Log.e(TAG, "find impl " + iHub.getSimpleName() + " error " + ", using proxy", throwable);
                 } else {
-                    Log.e(TAG, "impl %s" + iHub.getSimpleName() + " exit but onCreate error , using impl", e);
+                    Log.e(TAG, "impl %s" + iHub.getSimpleName() + " exit but onCreate error , using impl", throwable);
                 }
             }
         }
