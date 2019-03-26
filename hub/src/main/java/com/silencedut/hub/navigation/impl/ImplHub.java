@@ -38,6 +38,15 @@ public class ImplHub {
 
     }
 
+    /**
+     * copy from HashMap jdk8
+     * @param key
+     * @return
+     */
+    private static int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+    }
 
     public static <T extends IHub> T getImpl(Class<T> iHub) {
 
@@ -45,7 +54,7 @@ public class ImplHub {
             Hub.sIHubLog.error(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()),new IllegalArgumentException("interfaceType must be a interface"));
         }
 
-        int monitorIndex = iHub.hashCode() & (HubMonitor.values().length -1);
+        int monitorIndex = hash(iHub.hashCode()) & (HubMonitor.values().length -1);
         IHub realImpl;
         long monitorStartTime = System.currentTimeMillis();
         Hub.sIHubLog.info(TAG, "getImpl before monitor"+iHub.getName()+" monitor"+monitorIndex +" currentThread :"+Thread.currentThread().getName());
@@ -74,6 +83,8 @@ public class ImplHub {
                     }
 
                     realImpl.onCreate();
+
+
                     Hub.sIHubLog.info(TAG, String.format("newImpl %s, cost time  %s ", iHub.getName(),System.currentTimeMillis() - startTime));
                 }
             } catch (Throwable throwable) {
