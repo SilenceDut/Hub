@@ -47,13 +47,17 @@ public class ImplHub {
             Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
         }
 
-
         int monitorIndex = iHub.hashCode() & (HubMonitor.values().length -1);
         IHub realImpl;
+        long monitorStartTime = System.currentTimeMillis();
+        Log.i(TAG, String.format("getImpl before monitor %s , monitor %d ", iHub.getName(),monitorIndex));
         synchronized (HubMonitor.values()[monitorIndex]) {
             try {
+                long startTime = System.currentTimeMillis();
+                Log.i(TAG, String.format("getImpl new  %s ", iHub.getName()));
                 realImpl = sRealImpls.get(iHub);
                 if (realImpl == null) {
+
                     String apiCanonicalName = iHub.getCanonicalName();
 
                     String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
@@ -71,7 +75,7 @@ public class ImplHub {
                     }
 
                     realImpl.onCreate();
-
+                    Log.i(TAG, String.format("getImpl %s, cost time  %s ", iHub.getName(),System.currentTimeMillis() - startTime));
                 }
             } catch (Throwable throwable) {
 
@@ -86,7 +90,7 @@ public class ImplHub {
                 }
             }
         }
-
+        Log.i(TAG, String.format("getImpl %s, result cost  %s ", iHub.getName(),System.currentTimeMillis() - monitorStartTime));
         return (T) realImpl;
     }
 
