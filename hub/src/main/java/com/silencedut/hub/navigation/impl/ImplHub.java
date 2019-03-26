@@ -48,7 +48,8 @@ public class ImplHub {
         int monitorIndex = iHub.hashCode() & (HubMonitor.values().length -1);
         IHub realImpl;
         long monitorStartTime = System.currentTimeMillis();
-        Hub.sIHubLog.info(TAG, String.format("getImpl before monitor %s , monitor %d ", iHub.getName(),monitorIndex));
+        Hub.sIHubLog.info(TAG, "getImpl before monitor"+iHub.getName()+" monitor"+monitorIndex +" currentThread :"+Thread.currentThread().getName());
+
         synchronized (HubMonitor.values()[monitorIndex]) {
             try {
                 long startTime = System.currentTimeMillis();
