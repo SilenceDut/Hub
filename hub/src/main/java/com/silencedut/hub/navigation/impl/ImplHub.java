@@ -54,7 +54,7 @@ public class ImplHub {
         synchronized (HubMonitor.values()[monitorIndex]) {
             try {
                 long startTime = System.currentTimeMillis();
-                Log.i(TAG, String.format("getImpl new  %s ", iHub.getName()));
+                Log.i(TAG, String.format("newImpl  %s ", iHub.getName()));
                 realImpl = sRealImpls.get(iHub);
                 if (realImpl == null) {
 
@@ -75,7 +75,7 @@ public class ImplHub {
                     }
 
                     realImpl.onCreate();
-                    Log.i(TAG, String.format("getImpl %s, cost time  %s ", iHub.getName(),System.currentTimeMillis() - startTime));
+                    Log.i(TAG, String.format("newImpl %s, cost time  %s ", iHub.getName(),System.currentTimeMillis() - startTime));
                 }
             } catch (Throwable throwable) {
 
