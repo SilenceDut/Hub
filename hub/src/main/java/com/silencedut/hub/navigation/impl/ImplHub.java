@@ -33,7 +33,6 @@ public class ImplHub {
         if (impl == null) {
             return;
         }
-
         sRealImpls.put(api,impl);
     }
 
