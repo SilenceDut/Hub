@@ -1,5 +1,7 @@
 package com.silencedut.hub.navigation.impl;
 
+import android.util.Log;
+
 import com.silencedut.hub.Hub;
 import com.silencedut.hub.IHub;
 import com.silencedut.hub_annotation.IFindImplClz;
@@ -12,15 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2018/8/9
  */
 public class ImplHub {
-
-    private  enum HubMonitor {
-        /**
-         * hub class对象公用锁，避免直接锁class可能造成的死锁。length 必须为 2的n次方，用位运算代替求余数
-         */
-        ZERO,ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN
-    }
-
-
     private static final String TAG = "ImplHub";
     private static final String IMPL_HELPER_SUFFIX = "ImplHelper";
     private static Map<Class,IHub> sRealImpls = new ConcurrentHashMap<>();
@@ -33,74 +26,62 @@ public class ImplHub {
         if (impl == null) {
             return;
         }
+
         sRealImpls.put(api,impl);
     }
 
-    /**
-     * copy from HashMap jdk8
-     * @param key
-     * @return
-     */
-    private static int hash(Object key) {
-        int h;
-        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
-    }
 
-    public static <T extends IHub> T getImpl(Class<T> iHub) {
+    public static <T extends IHub> T getImpl( Class<T> iHub) {
 
         if (!iHub.isInterface()) {
-            Hub.sIHubLog.error(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()),new IllegalArgumentException("interfaceType must be a interface"));
+            Log.e(TAG, String.format("interfaceType must be a interface , %s is not a interface", iHub.getName()));
         }
 
-        int monitorIndex = hash(iHub.hashCode()) & (HubMonitor.values().length -1);
-        IHub realImpl;
-        long monitorStartTime = System.currentTimeMillis();
-        HubMonitor hubMonitor = HubMonitor.values()[monitorIndex];
-        Hub.sIHubLog.info(TAG,
-                "getImpl before monitor:"+iHub.getName()+",monitor:"+hubMonitor +", currentThread :"+Thread.currentThread().getName());
+        IHub realImpl = sRealImpls.get(iHub);
 
-        synchronized (hubMonitor) {
+        if (realImpl == null) {
             try {
-                long startTime = System.currentTimeMillis();
-                Hub.sIHubLog.info(TAG, iHub.getName()+" acquired monitor "+ hubMonitor);
-                realImpl = sRealImpls.get(iHub);
-                if (realImpl == null) {
+                synchronized (iHub) {
+                    realImpl = sRealImpls.get(iHub);
+                    if (realImpl == null) {
+                        String apiCanonicalName = iHub.getCanonicalName();
 
-                    String apiCanonicalName = iHub.getCanonicalName();
+                        String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
 
-                    String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
+                        String apiName =  apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR)+1, apiCanonicalName.length());
 
-                    String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1);
+                        String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR+IMPL_HELPER_SUFFIX;
 
-                    String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR + IMPL_HELPER_SUFFIX;
+                        IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
 
-                    IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
+                        /*
+                        暂时先只支持无参的构造函数
+                         */
 
-                    realImpl = (IHub) iFindImplClzHelper.newImplInstance();
+                        realImpl = (IHub) iFindImplClzHelper.newImplInstance();
 
-                    for (String apiClassName : iFindImplClzHelper.getApis()) {
-                        putImpl(Class.forName(apiClassName), realImpl);
+                        realImpl.onCreate();
+
+                        for(String apiClassName : iFindImplClzHelper.getApis()) {
+                            putImpl(Class.forName(apiClassName),realImpl);
+                        }
+
                     }
-
-                    realImpl.onCreate();
-
-
-                    Hub.sIHubLog.info(TAG, String.format("newImpl %s, cost time  %s ", iHub.getName(),System.currentTimeMillis() - startTime));
                 }
-            } catch (Throwable throwable) {
+
+
+            }catch (Throwable e) {
 
                 ImplHandler implHandler = new ImplHandler(iHub);
-                realImpl = sRealImpls.get(iHub);
-                if (realImpl == null) {
+                if(realImpl == null) {
                     realImpl = (IHub) implHandler.mImplProxy;
-                    sRealImpls.put (iHub,realImpl);
-                    Hub.sIHubLog.error(TAG, "find impl " + iHub.getSimpleName() + " error " + ", using proxy", throwable);
-                } else {
-                    Hub.sIHubLog.error(TAG, "impl %s" + iHub.getSimpleName() + " exit but onCreate error , using impl", throwable);
+                    Log.e(TAG,"find impl "+iHub.getSimpleName()+" error "+", using proxy", e);
+                }else {
+                    Log.e(TAG,"impl %s"+iHub.getSimpleName()+" exit but onCreate error , using impl",e);
                 }
             }
         }
-        Hub.sIHubLog.info(TAG, String.format("getImpl %s, result cost  %s ", iHub.getName(),System.currentTimeMillis() - monitorStartTime));
+
         return (T) realImpl;
     }
 
