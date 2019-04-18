@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ImplHub {
 
-    private enum HubMonitor {
+    private  enum HubMonitor {
         /**
          * hub class对象公用锁，避免直接锁class可能造成的死锁。length 必须为 2的n次方，用位运算代替求余数
          */
@@ -55,12 +55,14 @@ public class ImplHub {
         int monitorIndex = hash(iHub.hashCode()) & (HubMonitor.values().length -1);
         IHub realImpl;
         long monitorStartTime = System.currentTimeMillis();
-        Hub.sIHubLog.info(TAG, "getImpl before monitor"+iHub.getName()+" monitor"+monitorIndex +" currentThread :"+Thread.currentThread().getName());
+        HubMonitor hubMonitor = HubMonitor.values()[monitorIndex];
+        Hub.sIHubLog.info(TAG,
+                "getImpl before monitor:"+iHub.getName()+",monitor:"+hubMonitor +", currentThread :"+Thread.currentThread().getName());
 
-        synchronized (HubMonitor.values()[monitorIndex]) {
+        synchronized (hubMonitor) {
             try {
                 long startTime = System.currentTimeMillis();
-                Hub.sIHubLog.info(TAG, String.format("newImpl  %s ", iHub.getName()));
+                Hub.sIHubLog.info(TAG, iHub.getName()+" acquired monitor "+ hubMonitor);
                 realImpl = sRealImpls.get(iHub);
                 if (realImpl == null) {
 
@@ -68,7 +70,7 @@ public class ImplHub {
 
                     String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
 
-                    String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1, apiCanonicalName.length());
+                    String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1);
 
                     String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + Hub.CLASS_NAME_SEPARATOR + IMPL_HELPER_SUFFIX;
 
