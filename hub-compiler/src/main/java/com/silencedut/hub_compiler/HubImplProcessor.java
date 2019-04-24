@@ -75,13 +75,16 @@ public class HubImplProcessor extends BaseHubProcessor{
 
     private JavaFile generateApiFinder(TypeName typeName,String qualifiedSuperClzName,String implClzName,Set<String> sameImplApiClass) {
 
-        TypeName stringSet = ParameterizedTypeName.get(ClassName.get(Set.class),ClassName.get(String.class));
+        TypeName stringSet = ParameterizedTypeName.get(ClassName.get(Set.class),ClassName.get(Class.class));
+
+        TypeName newStaticInstance = TypeName.get(Object.class);
 
         CodeBlock.Builder staticBlock = CodeBlock.builder()
-                .addStatement(Constants.METHOD_GETAPIField+" = new $T()",  HashSet.class);
+                .addStatement(Constants.METHOD_GETAPIField+" = new $T()",  HashSet.class)
+                .addStatement(Constants.IMPL_INSTANCE+" = new "+implClzName+"()");
 
         for(String api : sameImplApiClass) {
-            staticBlock.addStatement(Constants.METHOD_GETAPIField+".add($S)",api);
+            staticBlock.addStatement(Constants.METHOD_GETAPIField+".add("+api+".class)");
         }
 
         MethodSpec.Builder getSameImplApis = MethodSpec.methodBuilder(Constants.METHOD_GETAPIS)
@@ -91,22 +94,23 @@ public class HubImplProcessor extends BaseHubProcessor{
                 .addStatement("return "+ Constants.METHOD_GETAPIField);
 
 
-        MethodSpec.Builder newInstance = MethodSpec.methodBuilder("newImplInstance")
+        MethodSpec.Builder newInstance = MethodSpec.methodBuilder("getInstance")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .returns(typeName)
-                .addStatement("return new "+implClzName+"()");
+                .returns(Object.class)
+                .addStatement("return "+Constants.IMPL_INSTANCE);
 
         // generate whole class
 
         String packageName = qualifiedSuperClzName.substring(0, qualifiedSuperClzName.lastIndexOf("."));
-        String apiSimpleName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1, qualifiedSuperClzName.length());
+        String apiSimpleName =  qualifiedSuperClzName.substring(qualifiedSuperClzName.lastIndexOf(".")+1);
 
         TypeSpec impl = TypeSpec.classBuilder(apiSimpleName+Constants.CLASS_NAME_SEPARATOR+Constants.IMPL_HELPER_SUFFIX)
                 .addSuperinterface(TypeName.get(IFindImplClz.class))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addMethod(newInstance.build())
-                .addField(stringSet, Constants.METHOD_GETAPIField,Modifier.STATIC,Modifier.PRIVATE)
+                .addField(stringSet, Constants.METHOD_GETAPIField,Modifier.FINAL,Modifier.STATIC,Modifier.PRIVATE)
+                .addField(newStaticInstance, Constants.IMPL_INSTANCE,Modifier.FINAL,Modifier.STATIC,Modifier.PRIVATE)
                 .addStaticBlock(staticBlock.build())
                 .addMethod(getSameImplApis.build())
                 .build();

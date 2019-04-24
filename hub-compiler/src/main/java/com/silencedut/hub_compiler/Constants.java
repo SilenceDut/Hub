@@ -23,6 +23,7 @@ class Constants {
     final static  String Filed_ParamName = "paramNames";
     final static  String METHOD_GETActivityField = "targetActivity";
     final static  String METHOD_INJECT = "inject";
+    final static  String IMPL_INSTANCE = "sImplInstance";
 
     //file name feature
     final static  String ACTIVITY_HELPER_SUFFIX = "Helper";

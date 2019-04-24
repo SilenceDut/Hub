@@ -7,6 +7,6 @@ import java.util.Set;
  */
 
 public interface IFindImplClz {
-     Object newImplInstance();
-     Set<String> getApis();
+     Object getInstance();
+     Set<Class> getApis();
 }
