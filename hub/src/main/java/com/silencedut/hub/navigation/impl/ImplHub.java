@@ -1,14 +1,16 @@
 package com.silencedut.hub.navigation.impl;
 
+import android.os.Looper;
 import android.util.Log;
 
 import com.silencedut.hub.Hub;
 import com.silencedut.hub.IHub;
+import com.silencedut.hub.utils.ErrorUseHandleException;
 import com.silencedut.hub_annotation.IFindImplClz;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -50,63 +52,73 @@ public class ImplHub {
     public static <T extends IHub> T getImpl(Class<T> iHub) {
 
         if (!iHub.isInterface()) {
-            Hub.sIHubLog.error(TAG, String.format("interfaceType must be a interface , %s is not a interface",
+            Hub.sHubConfig.getIHubLog().error(TAG, String.format("interfaceType must be a interface , %s is not a interface",
                     iHub.getName()), new IllegalArgumentException("interfaceType must be a interface"));
         }
 
-        IHub realImpl = null;
 
-        try {
             AtomicLong ctl = getCtls(iHub);
 
-            realImpl = sRealImpls.get(iHub);
-            if (realImpl == null) {
-                long currentThreadId = Thread.currentThread().getId();
-                while (ctl.get() != CREATED) {
-                    if (ctl.compareAndSet(INIT_STATE, currentThreadId)) {
-                        IFindImplClz iFindImplClzHelper = findImplHelper(iHub);
-                        realImpl = (IHub) iFindImplClzHelper.getInstance();
-                        Hub.sIHubLog.info(TAG, "normal onCreate before "+iHub+".Thread"+Thread.currentThread());
-                        realImpl.onCreate();
+            IHub realImpl = sRealImpls.get(iHub);
+        if (realImpl == null) {
+            long currentThreadId = Thread.currentThread().getId();
+            while (ctl.get() != CREATED) {
+                if (ctl.compareAndSet(INIT_STATE, currentThreadId)) {
+                    IFindImplClz iFindImplClzHelper ;
+                    try {
+                        iFindImplClzHelper = findImplHelper(iHub);
+                    } catch (Exception e) {
+                        ctl.compareAndSet(currentThreadId, INIT_STATE);
+                        Hub.sHubConfig.getIHubLog().error(TAG,
+                                iHub+" findImplHelper error "+"，Thread："+Thread.currentThread(),e);
+                        return (T) new ImplHandler(iHub).mImplProxy;
+                    }
+                    realImpl = (IHub) iFindImplClzHelper.getInstance();
+                    Hub.sHubConfig.getIHubLog().info(TAG,
+                            iHub+" onCreate before "+"，Thread："+Thread.currentThread());
+                    realImpl.onCreate();
+                    for (Class apiClass : iFindImplClzHelper.getApis()) {
+                        putImpl(apiClass, realImpl);
+                    }
+                    ctl.set(CREATED);
+                    sThreadWaiter.remove(currentThreadId);
+                    Hub.sHubConfig.getIHubLog().info(TAG,
+                            iHub+"onCreate after "+" ，Thread："+Thread.currentThread());
+                } else if (ctl.get() == currentThreadId) {
+                    Hub.sHubConfig.errorUseHandler.errorUseHub(
+                            "getImpl api:"+iHub+ " error,recursion onCreate() on same thread,check api impl " +
+                                    "init 、 constructor 、onCreate() to avoid circular reference,",traceToString(2
+                                    , Thread.currentThread().getStackTrace()));
+                    break;
+                } else if (ctl.get() != CREATED) {
+                    //判断iHub的初始化线程是否在等待当前线程的初始化
+                    if(sThreadWaiter.get(ctl.get())!=null && sThreadWaiter.get(ctl.get()) == currentThreadId) {
 
-                        for (Class apiClass : iFindImplClzHelper.getApis()) {
-                            putImpl(apiClass, realImpl);
-                        }
-                        ctl.set(CREATED);
+                        Hub.sHubConfig.getIHubLog().info(TAG, currentThreadId +" leave "+ctl.get() + ","+iHub);
+                        //一般是在不同线程初始化互相引用导致
 
-                        sThreadWaiter.remove(currentThreadId);
-                        Hub.sIHubLog.info(TAG, "normal onCreate after "+iHub+".Thread"+Thread.currentThread());
-                    } else if (ctl.get() == currentThreadId) {
-                        Hub.sIHubLog.info(TAG, "recursion onCreate "+iHub+".Thread"+Thread.currentThread());
+                        Hub.sHubConfig.errorUseHandler.errorUseHub(
+                                "getImpl api:"+iHub+ " error,recursion on multi thread,check api impl " +
+                                        "init 、 constructor 、onCreate() to avoid circular reference"
+                                        ,traceToString(2, Thread.currentThread().getStackTrace()));
                         break;
-                    } else if (ctl.get() != CREATED) {
-                        //判断iHub的初始化线程是否在等待当前线程的初始化
-                        if(sThreadWaiter.get(ctl.get())!=null && sThreadWaiter.get(ctl.get()) == currentThreadId) {
-                            Hub.sIHubLog.info(TAG, currentThreadId +" leave "+ctl.get() + ","+iHub);
-                            break;
-                        }else {
-                            //当前线程初始化iHub在等待ctl.get()的线程的初始化完成
-                            sThreadWaiter.put(currentThreadId,ctl.get());
+                    }else {
+                        //当前线程初始化iHub在等待ctl.get()的线程的初始化完成
+                        sThreadWaiter.put(currentThreadId,ctl.get());
+                        if(!mainThreadCheck()) {
                             Thread.yield();
-                            Hub.sIHubLog.info(TAG, currentThreadId +"wait for"+ctl.get() + ","+iHub);
                         }
-                        Hub.sIHubLog.info(TAG, "concurrent onCreate "+iHub);
+                        Hub.sHubConfig.getIHubLog().info(TAG, currentThreadId +"wait for"+ctl.get() + ","+iHub);
                     }
                 }
             }
-
-        } catch (Throwable e) {
-
-            ImplHandler implHandler = new ImplHandler(iHub);
-            if (realImpl == null) {
-                realImpl = (IHub) implHandler.mImplProxy;
-                Log.e(TAG, "find impl " + iHub.getSimpleName() + " error " + ", using proxy", e);
-            } else {
-                Log.e(TAG, "impl %s" + iHub.getSimpleName() + " exit but onCreate error , using impl", e);
-            }
         }
-
         return (T) realImpl;
+    }
+
+
+    private static boolean mainThreadCheck() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
     private static AtomicLong getCtls(Class iHub) {
@@ -151,27 +163,31 @@ public class ImplHub {
         if (implExist) {
             return true;
         }
-
         try {
-            String apiCanonicalName = iHub.getCanonicalName();
-
-            String packageName = apiCanonicalName.substring(0, apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR));
-            String apiName = apiCanonicalName.substring(apiCanonicalName.lastIndexOf(Hub.PACKAGER_SEPARATOR) + 1);
-
-            String implCanonicalName = packageName + Hub.PACKAGER_SEPARATOR + apiName + "_ImplHelper";
-            IFindImplClz iFindImplClzHelper = (IFindImplClz) Class.forName(implCanonicalName).newInstance();
-
-            return iFindImplClzHelper != null;
-
+            return findImplHelper(iHub) != null;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public static void removeImpl(Class<? extends IHub> api) {
-        if (api == null) {
-            return;
+    public static String traceToString(int startIndex,Object[] stackArray) {
+        if (stackArray == null) {
+            return "null";
         }
-        sRealImpls.remove(api);
+
+        int iMax = stackArray.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = startIndex; ; i++) {
+            b.append(String.valueOf(stackArray[i]));
+            if (i == iMax) {
+                return b.append(']').toString();
+            }
+            b.append("\n");
+        }
     }
 }

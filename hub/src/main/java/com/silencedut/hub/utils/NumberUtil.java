@@ -1,4 +1,4 @@
-package com.silencedut.hub;
+package com.silencedut.hub.utils;
 
 /**
  * Created by SilenceDut on 2018/1/4 .

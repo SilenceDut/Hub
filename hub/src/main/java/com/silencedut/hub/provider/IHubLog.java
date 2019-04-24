@@ -1,4 +1,4 @@
-package com.silencedut.hub;
+package com.silencedut.hub.provider;
 
 /**
  * @author SilenceDut
@@ -6,5 +6,6 @@ package com.silencedut.hub;
  */
 public interface IHubLog {
     void info(String tag,String info);
-    void error(String tag, String msg, Throwable tr);
+    void error(String tag, String msg,  Throwable... objs);
+
 }

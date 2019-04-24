@@ -3,7 +3,8 @@ package com.silencedut.hub.navigation.impl;
 import android.util.Log;
 
 import com.silencedut.hub.BuildConfig;
-import com.silencedut.hub.NumberUtil;
+import com.silencedut.hub.IHub;
+import com.silencedut.hub.utils.NumberUtil;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
