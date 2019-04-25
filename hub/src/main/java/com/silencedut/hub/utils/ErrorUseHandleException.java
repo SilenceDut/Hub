@@ -17,4 +17,25 @@ public class ErrorUseHandleException extends RuntimeException{
     public ErrorUseHandleException(String msg,String throwableStack){
         super(msg,new Throwable(throwableStack));
     }
+
+    public static String traceToString(int startIndex,Object[] stackArray) {
+        if (stackArray == null) {
+            return "null";
+        }
+
+        int iMax = stackArray.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = startIndex; ; i++) {
+            b.append(String.valueOf(stackArray[i]));
+            if (i == iMax) {
+                return b.append(']').toString();
+            }
+            b.append("\n");
+        }
+    }
 }

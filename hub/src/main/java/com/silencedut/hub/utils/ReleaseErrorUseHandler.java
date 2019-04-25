@@ -10,7 +10,7 @@ import com.silencedut.hub.IHub;
 public class ReleaseErrorUseHandler implements ErrorUseHandler {
     @Override
     public void errorUseHub(String msg,String throwableStack) {
-        Hub.sHubConfig.getIHubLog().error("ReleaseErrorUseHandler",msg,new Throwable(throwableStack));
+        Hub.sHubConfig.getIHubLog().error("ReleaseErrorUseHandler",msg+"\n"+throwableStack);
     }
 
 }

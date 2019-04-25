@@ -57,7 +57,7 @@ public class HubConfig {
     }
 
     private static final DebugErrorUseHandler DEBUG_ERROR_USE_HANDLER = new DebugErrorUseHandler();
-    private static final ReleaseErrorUseHandler RELEASE_ERROR_USE_HANDLER = new DebugErrorUseHandler();
+    private static final ReleaseErrorUseHandler RELEASE_ERROR_USE_HANDLER = new ReleaseErrorUseHandler();
 
 
 }

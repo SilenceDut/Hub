@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ImplHub";
     private Thread mThread1;
     private Thread mThread2;
     @Override
@@ -26,18 +26,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Hub.configHub(HubConfig.create().setDebug(true));
+        Hub.configHub(HubConfig.create().setDebug(false));
 
         findViewById(R.id.method_invoke).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
               //  Hub.getImpl(ITestApi.class);
-                if(mThread1 == null) {
+               if(mThread1 == null) {
 
                     mThread1 = new Thread(new Runnable() {
                         @Override
                         public void run() {
+
                             Hub.getImpl(ITestApi.class);
+                            Log.d(TAG,"mThread1");
+                            // Hub.getImpl(ITestApi.class);
                         }
                     });
                     mThread1.start();
@@ -46,14 +49,35 @@ public class MainActivity extends AppCompatActivity {
                     mThread2 = new Thread(new Runnable() {
                         @Override
                         public void run() {
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             Hub.getImpl(ITestApi1.class);
+                            Log.d(TAG,"mThread2");
                         }
                     });
                     mThread2.start();
-                }else {
+
+                  new Thread(new Runnable() {
+                       @Override
+                       public void run() {
+                           try {
+                               Thread.sleep(12);
+                           } catch (InterruptedException e) {
+                               e.printStackTrace();
+                           }
+                           Hub.getImpl(ITestApi.class);
+                           Hub.getImpl(ITestApi1.class);
+                           Log.d(TAG,"mThread3");
+                       }
+                   }).start();
+
+               }else {
                     Log.d("ImplHub", Arrays.toString(mThread1.getStackTrace()));
                     Log.d("ImplHub", Arrays.toString(mThread2.getStackTrace()));
-                }
+               }
 
             }
         });

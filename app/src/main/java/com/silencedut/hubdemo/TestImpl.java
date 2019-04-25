@@ -26,7 +26,7 @@ class TestImpl implements  IMultiApi,ITestApi{
     @Override
     public void onCreate() {
         try {
-            Thread.sleep(120);
+            Thread.sleep(40);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
