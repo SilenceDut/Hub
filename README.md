@@ -1,5 +1,6 @@
-## Hub [![](https://jitpack.io/v/SilenceDut/Hub.svg)](https://jitpack.io/#SilenceDut/Hub)
+## Hub 
 a concise di library which can avoid check null when want to invoke a implementation by interface
+
 
 ## Project
 
@@ -107,7 +108,8 @@ Hub.getActivityWithExpand(IActivityTest.class).withResult(MainActivity.this,10).
 ```
 
 
-## Import
+## Import- Stable release(2.8.2)
+
 
 **Step1.Add it in your root add abuild.gradle at the end of repositories:**
 
