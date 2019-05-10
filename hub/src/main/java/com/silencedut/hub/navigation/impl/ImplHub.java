@@ -117,7 +117,7 @@ public class ImplHub {
                 }
             }
         }
-        return (T) realImpl;
+        return (T) sRealImpls.get(iHub);
     }
 
     /**
