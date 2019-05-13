@@ -30,9 +30,8 @@ class TestImpl implements  IMultiApi,ITestApi{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.d("ImplHub","ImplHub onCreate");
-        Hub.getImpl(ITestApi1.class);
-        Log.d("ImplHub","ImplHub onCreate after");
+        Log.d("ImplHub","TestImpl onCreate");
+        Log.d("ImplHub","TestImpl onCreate after");
     }
 
     @Override

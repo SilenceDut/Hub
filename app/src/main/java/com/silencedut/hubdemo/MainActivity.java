@@ -54,25 +54,25 @@ public class MainActivity extends AppCompatActivity {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            Hub.getImpl(ITestApi1.class);
+                            Hub.getImpl(ITestApi.class);
                             Log.d(TAG,"mThread2");
                         }
                     });
                     mThread2.start();
 
-                  new Thread(new Runnable() {
-                       @Override
-                       public void run() {
-                           try {
-                               Thread.sleep(12);
-                           } catch (InterruptedException e) {
-                               e.printStackTrace();
-                           }
-                           Hub.getImpl(ITestApi.class);
-                           Hub.getImpl(ITestApi1.class);
-                           Log.d(TAG,"mThread3");
-                       }
-                   }).start();
+                  // new Thread(new Runnable() {
+                  //      @Override
+                  //      public void run() {
+                  //          try {
+                  //              Thread.sleep(12);
+                  //          } catch (InterruptedException e) {
+                  //              e.printStackTrace();
+                  //          }
+                  //          Hub.getImpl(ITestApi.class);
+                  //          Hub.getImpl(ITestApi1.class);
+                  //          Log.d(TAG,"mThread3");
+                  //      }
+                  //  }).start();
 
                }else {
                     Log.d("ImplHub", Arrays.toString(mThread1.getStackTrace()));
