@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
-import java.util.stream.Collector;
+
 
 /**
  * @author SilenceDut
@@ -70,29 +70,23 @@ public class ImplHub {
             AtomicLong ctl = getCtls(iHub);
             long currentThreadId = Thread.currentThread().getId();
             if (ctl.compareAndSet(INIT_STATE, currentThreadId)) {
-                Hub.sHubConfig.getIHubLog().info(TAG,
-                        iHub + " onCreate before " + "，Thread：" + Thread.currentThread());
                 IFindImplClz iFindImplClzHelper;
                 try {
                     iFindImplClzHelper = findImplHelper(iHub);
+                    IHub realImpl = (IHub) iFindImplClzHelper.getInstance();
+                    realImpl.onCreate();
+                    for (Class apiClass : iFindImplClzHelper.getApis()) {
+                        putImpl(apiClass, realImpl);
+                    }
+                    ctl.set(CREATED);
+                    releaseWaiter(iHub);
                 } catch (Exception e) {
                     ctl.compareAndSet(currentThreadId, INIT_STATE);
                     Hub.sHubConfig.getIHubLog().error(TAG,
-                            iHub + " findImplHelper error " + "，Thread：" + Thread.currentThread(), e);
+                            iHub + " initialization error " + "，Thread：" + Thread.currentThread(), e);
                     return exceptionHandler(iHub);
                 }
 
-                IHub realImpl = (IHub) iFindImplClzHelper.getInstance();
-
-                realImpl.onCreate();
-                for (Class apiClass : iFindImplClzHelper.getApis()) {
-                    putImpl(apiClass, realImpl);
-                }
-                ctl.set(CREATED);
-
-                releaseWaiter(iHub);
-                Hub.sHubConfig.getIHubLog().info(TAG,
-                        iHub + " onCreate after " + " ，Thread：" + Thread.currentThread());
             } else if (ctl.get() == currentThreadId) {
                 Hub.sHubConfig.errorUseHandler.errorUseHub(
                         "getImpl api:" + iHub + " error,recursion onCreate() on same thread,check api impl " +
