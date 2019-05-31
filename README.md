@@ -1,5 +1,4 @@
-## Hub  
-[![](https://jitpack.io/v/silencedut/hub.svg)](https://jitpack.io/#silencedut/hub)
+## Hub  [![](https://jitpack.io/v/silencedut/hub.svg)](https://jitpack.io/#silencedut/hub)
 a concise di library which can avoid check null when want to invoke a implementation by interface
 
 
