@@ -1,4 +1,5 @@
-## Hub 
+## Hub  
+[![](https://jitpack.io/v/silencedut/hub.svg)](https://jitpack.io/#silencedut/hub)
 a concise di library which can avoid check null when want to invoke a implementation by interface
 
 
@@ -12,14 +13,24 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 ## Introduce
 [框架思想](http://www.silencedut.com/2018/08/12/%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8E%E6%8E%A5%E5%8F%A3%E5%8C%96%E3%80%81%E6%B8%85%E6%99%B0%E6%98%93%E8%AF%BB%E7%9A%84%E8%B7%AF%E7%94%B1%E6%A1%86%E6%9E%B6%E2%80%94%E2%80%94Hub/)
 
+
 ## Feature
 
 1. 通过控制反转实现module间服务提供、Activity跳转，Activity支持参数自动处理传递的参数，不需要繁琐的注解标注
 2. 多接口支持。优点在于不必要暴露所有接口,只需将需要的接口暴露，比如一个服务可能支持多个功能，但是有些功能只需要再module内使用，有些需要提供给其他module，这样就可以抽离出多个接口，只需要将需要暴露的放到基础module里。
-3. 支持**多进程Activity跳转**的参数自动处理
-4. 接口化的通信方式类似于“SDK”+数据结构，面向接口编程，更清晰直观， 对IDE更友好（可在IDE中直接跳转），协议变化直接反映在编译上，维护接口也简单
-5. 不需要繁琐的判空处理，服务的实现类或者路径的Activity不存在时不会崩溃。Activity跳转失败可以通过方法返回值来感知，做一些异常处理
-6. **Less is more, simple is better!使用简单，功能强大**
+3. 接口化的通信方式类似于“SDK”+数据结构，面向接口编程，更清晰直观， 对IDE更友好（可在IDE中直接跳转），协议变化直接反映在编译上，维护接口也简单3
+4. 多线程同时获取为初始话的服务的实现类时，不会因锁导致最后调用的初始化时间过长
+5. **Less is more, simple is better!使用简单，功能强大**
+
+## 对比[ARouter](https://github.com/alibaba/ARouter)在多线程中的初始化耗时表现
+
+
+|  | ServerA | ServerB |  ServerC|
+| --- | --- | --- | --- | 
+| 对应实现类单独初始化耗时 |  500ms| 300ms | 200ms |
+
+如果不同线程同时区获取ServerA，ServerB，ServerC，那么ARouter完全初始化三个服务的时间是1000ms,而Hub的完全初始化时间是500ms。这种情形在优化应用启动的时候，尤其一个应用有很多的服务实现类，极端情况下就可能退化到了单线程的执行。
+
 
 ## Using
 
@@ -108,8 +119,7 @@ Hub.getActivityWithExpand(IActivityTest.class).withResult(MainActivity.this,10).
 ```
 
 
-## Import- Stable release(2.8.2)
-
+## Import
 
 **Step1.Add it in your root add abuild.gradle at the end of repositories:**
 
