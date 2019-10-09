@@ -1,7 +1,9 @@
 package com.silencedut.hubdemo;
 
 import android.app.Application;
+import android.util.Log;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.silencedut.hub.Hub;
 
 /**
@@ -15,6 +17,9 @@ public class App extends Application {
         super.onCreate();
         sInstance = this;
         Hub.init(this);
+        long start = System.currentTimeMillis();
+        ARouter.init(this);
+        Log.d("App","cost:"+(System.currentTimeMillis()-start));
     }
 
     public static Application getInsatnce() {

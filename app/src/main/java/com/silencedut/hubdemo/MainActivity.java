@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.silencedut.hub.Hub;
 import com.silencedut.hub.provider.HubConfig;
 
@@ -15,6 +16,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CyclicBarrier;
+import java.util.function.Supplier;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Hub.configHub(HubConfig.create().setDebug(false));
@@ -31,53 +36,43 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.method_invoke).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  Hub.getImpl(ITestApi.class);
-               if(mThread1 == null) {
 
-                    mThread1 = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        ARouter.getInstance().navigation(ARouterSever1.class);
+                        Log.d("App","ARouterSever1 coast"+(System.currentTimeMillis()-start));
+                    }
+                }).start();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        ARouter.getInstance().navigation(ARouterSever2.class);
+                        Log.d("App","ARouterSever2 coast"+(System.currentTimeMillis()-start));
 
-                            Hub.getImpl(ITestApi.class);
-                            Log.d(TAG,"mThread1");
-                            // Hub.getImpl(ITestApi.class);
-                        }
-                    });
-                    mThread1.start();
+                    }
+                }).start();
 
+                //hub
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        Hub.getImpl(ITestApi.class);
+                        Log.d("App","ITestApi coast"+(System.currentTimeMillis()-start));
+                    }
+                }).start();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        Hub.getImpl(ITestApi1.class);
+                        Log.d("App","ITestApi1 coast"+(System.currentTimeMillis()-start));
 
-                    mThread2 = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(10);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            Hub.getImpl(ITestApi.class);
-                            Log.d(TAG,"mThread2");
-                        }
-                    });
-                    mThread2.start();
-
-                  // new Thread(new Runnable() {
-                  //      @Override
-                  //      public void run() {
-                  //          try {
-                  //              Thread.sleep(12);
-                  //          } catch (InterruptedException e) {
-                  //              e.printStackTrace();
-                  //          }
-                  //          Hub.getImpl(ITestApi.class);
-                  //          Hub.getImpl(ITestApi1.class);
-                  //          Log.d(TAG,"mThread3");
-                  //      }
-                  //  }).start();
-
-               }else {
-                    Log.d("ImplHub", Arrays.toString(mThread1.getStackTrace()));
-                    Log.d("ImplHub", Arrays.toString(mThread2.getStackTrace()));
-               }
+                    }
+                }).start();
 
             }
         });

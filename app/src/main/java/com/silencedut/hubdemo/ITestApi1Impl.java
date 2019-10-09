@@ -17,17 +17,15 @@ public class ITestApi1Impl implements ITestApi1 {
     @Override
     public void test(Context context) {
         //mApi1.test(context);
-        Toast.makeText(App.getInsatnce(),"ITestApi1Impl ",Toast.LENGTH_LONG).show();
+
     }
 
     @Override
     public void onCreate() {
-
-
-        Log.d("ImplHub","ITestApi1Impl onCreate");
-        ITestApi mApi1 = Hub.getImpl(ITestApi.class);
-        Log.d("ImplHub","ITestApi1Impl onCreate after");
-     //   Toast.makeText(App.getInsatnce(),"ITestApi1Impl 的 onCreate",Toast.LENGTH_LONG).show();
-        // Hub.getImpl(ITestApi.class).test(App.getInsatnce());
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
