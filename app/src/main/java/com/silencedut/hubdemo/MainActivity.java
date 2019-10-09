@@ -23,8 +23,6 @@ import java.util.function.Supplier;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "ImplHub";
-    private Thread mThread1;
-    private Thread mThread2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
