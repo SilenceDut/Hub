@@ -10,7 +10,7 @@ It had been used in project [KnowWeather](https://github.com/SilenceDut/KnowWeat
 同时已用在日活百万级别的线上项目中
 
 ## Introduce
-[框架思想](http://www.silencedut.com/2018/08/12/%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8E%E6%8E%A5%E5%8F%A3%E5%8C%96%E3%80%81%E6%B8%85%E6%99%B0%E6%98%93%E8%AF%BB%E7%9A%84%E8%B7%AF%E7%94%B1%E6%A1%86%E6%9E%B6%E2%80%94%E2%80%94Hub/)
+[框架思想](https://silencedut.github.io/2018/08/12/%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8E%E6%8E%A5%E5%8F%A3%E5%8C%96%E3%80%81%E6%B8%85%E6%99%B0%E6%98%93%E8%AF%BB%E7%9A%84%E8%B7%AF%E7%94%B1%E6%A1%86%E6%9E%B6%E2%80%94%E2%80%94Hub/)
 
 
 ## Feature
